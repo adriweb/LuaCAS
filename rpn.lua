@@ -11,6 +11,7 @@ func["sqrt"]	= math.sqrt
 func["sin"]	= math.sin
 func["cos"]	= math.cos
 func["exp"]	= math.exp
+func["pi"] = math.pi
 
 argument_seperator	= ","
 
@@ -147,6 +148,6 @@ function calculateRPN(s)
   end
   n = table.getn(tb)
   if n==1 and z then return(z)
-  elseif n>1 or z==nil then return('error') end
+  elseif n>1 or z==nil then return('error (variables/symbols there ?)') end
 end
 
