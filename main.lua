@@ -1,6 +1,7 @@
 dofile 'tools.lua'
 dofile 'rpn.lua'
 dofile 'simple.lua'
+dofile 'rpn2infix.lua'
 
 repeat
 	io.write("luaCAS> ")
