@@ -8,6 +8,27 @@ function stackPop(stack)
 	return lastval
 end
 
+add = ""
+DDDONE = {}
+function dump(name, reference)
+	if type(reference) == "userdata" then
+		reference = getmetatable(reference)
+	end
+	
+	if type(reference) == "table" and not DDDONE[reference] and name ~= "DDDONE" then
+		DDDONE[reference] = true
+		print(add ..  tostring(name))
+		add = add .. "\t"
+		table.foreach(reference, dump)
+		add = add:sub(1,#add-1)
+	elseif type(reference) == "function" then
+		print(add .. name)
+	else
+		print(add .. name, "-", reference)
+	end
+end
+
+
 makeNumberNode = function (number)
     local node = {
         kind  = "number",
@@ -32,21 +53,30 @@ makeOpNode = function (op, left, right)
 end
     
 convertRPN2Tree = function (rpnExpr)
-     stack = {},
-        i,
-        ch,
-        rhs,
-        lhs;
-        
-    for i=1, string.len(rpnExpr), 1 do
-    	print("iteration " .. i)
-        ch = string.sub(rpnExpr,i,i);
-        if isNumeric(ch) and ((tonumber(ch) >= 0) and (tonumber(ch) <= 9 )) then
-            stackPush(stack,makeNumberNode(ch));
-        else
-            rhs = stackPop(stack);
-            lhs = stackPop(stack);
-            stackPush(stack,makeOpNode(ch, lhs, rhs));
+    local stack = {}
+    local i=0, ch, rhs, lhs
+    
+    while i<string.len(rpnExpr) do
+    	i=i+1
+    	local j = i
+    	ch = ""
+    	while " "~=(string.sub(rpnExpr,j,j)) and j <= string.len(rpnExpr) do
+        	ch = ch .. string.sub(rpnExpr,j,j);
+        	j=j+1
+        end
+        if ch~=" " and ch ~= "" then
+			if isNumeric(ch) then
+				stackPush(stack,makeNumberNode(ch));
+			else
+				rhs = stackPop(stack);
+				lhs = stackPop(stack);
+				stackPush(stack,makeOpNode(ch, lhs, rhs));
+			end
+			if i+string.len(ch) > string.len(rpnExpr) then
+        		i=i+1
+    		else
+    			i=i+string.len(ch)
+    		end
         end
     end        
         
@@ -88,12 +118,9 @@ end
   
 convertRPN2Infix = function (rpnExpr)
     local tree = convertRPN2Tree(rpnExpr);
-    print("tree is : ".. type(tree))
+    dump("tree",tree)
     local infixExpr = visit(tree);
-    print("****** " .. rpnExpr .. " ==> " .. infixExpr);
+    print(rpnExpr .. " ==> " .. infixExpr);
 end
     
-convertRPN2Infix("234//") -- => 2/(3/4)
-convertRPN2Infix("23/4/") -- => 2/3/4
-convertRPN2Infix("234**") -- => 2*3*4
-convertRPN2Infix("23*4*") -- => 2*3*4
+convertRPN2Infix("23 4 / 5 +") -- => 2/(3/4)
