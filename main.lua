@@ -12,6 +12,7 @@ repeat
    		local simprpn = tblinfo(simplify(toRPN(input)))
 		print("   RPN expr of simplified is : " .. simprpn)
 		print("   Calculated RPN is " .. calculateRPN(simprpn))
+		print("   Simplified RPN is " .. convertRPN2Infix(calculateRPN(simprpn)))
 		io.write("\n")
 		io.flush()
 	end

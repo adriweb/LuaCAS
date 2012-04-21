@@ -8,27 +8,6 @@ function stackPop(stack)
 	return lastval
 end
 
-add = ""
-DDDONE = {}
-function dump(name, reference)
-	if type(reference) == "userdata" then
-		reference = getmetatable(reference)
-	end
-	
-	if type(reference) == "table" and not DDDONE[reference] and name ~= "DDDONE" then
-		DDDONE[reference] = true
-		print(add ..  tostring(name))
-		add = add .. "\t"
-		table.foreach(reference, dump)
-		add = add:sub(1,#add-1)
-	elseif type(reference) == "function" then
-		print(add .. name)
-	else
-		print(add .. name, "-", reference)
-	end
-end
-
-
 makeNumberNode = function (number)
     local node = {
         kind  = "number",
@@ -118,9 +97,6 @@ end
   
 convertRPN2Infix = function (rpnExpr)
     local tree = convertRPN2Tree(rpnExpr);
-    dump("tree",tree)
     local infixExpr = visit(tree);
-    print(rpnExpr .. " ==> " .. infixExpr);
+    return infixExpr
 end
-    
-convertRPN2Infix("23 4 / 5 +") -- => 2/(3/4)
