@@ -45,3 +45,33 @@ end
 function string.ends(String,End)
    return End=='' or string.sub(String,-string.len(End))==End
 end
+
+function stackPush(stack,...)
+	table.insert(stack,...)
+end
+
+function stackPop(stack)
+	local lastval = stack[#stack]
+	table.remove(stack,#stack)
+	return lastval
+end
+
+add = ""
+DDDONE = {}
+function dump(name, reference)
+	if type(reference) == "userdata" then
+		reference = getmetatable(reference)
+	end
+	
+	if type(reference) == "table" and not DDDONE[reference] and name ~= "DDDONE" then
+		DDDONE[reference] = true
+		print(add ..  tostring(name))
+		add = add .. "\t"
+		table.foreach(reference, dump)
+		add = add:sub(1,#add-1)
+	elseif type(reference) == "function" then
+		print(add .. name)
+	else
+		print(add .. name, "-", reference)
+	end
+end

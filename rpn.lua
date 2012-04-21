@@ -11,7 +11,6 @@ func["sqrt"]	= math.sqrt
 func["sin"]	= math.sin
 func["cos"]	= math.cos
 func["exp"]	= math.exp
-func["pi"] = math.pi
 
 argument_seperator	= ","
 

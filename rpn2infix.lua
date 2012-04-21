@@ -1,33 +1,3 @@
-function stackPush(stack,...)
-	table.insert(stack,...)
-end
-
-function stackPop(stack)
-	local lastval = stack[#stack]
-	table.remove(stack,#stack)
-	return lastval
-end
-
-add = ""
-DDDONE = {}
-function dump(name, reference)
-	if type(reference) == "userdata" then
-		reference = getmetatable(reference)
-	end
-	
-	if type(reference) == "table" and not DDDONE[reference] and name ~= "DDDONE" then
-		DDDONE[reference] = true
-		print(add ..  tostring(name))
-		add = add .. "\t"
-		table.foreach(reference, dump)
-		add = add:sub(1,#add-1)
-	elseif type(reference) == "function" then
-		print(add .. name)
-	else
-		print(add .. name, "-", reference)
-	end
-end
-
 makeNumberNode = function (number)
     local node = {
         kind  = "number",
@@ -102,9 +72,9 @@ needParensOnRight = function (node)
         return false;
     end
     if ((node.operator == "+") or (node.operator == "*")) then
-        return (node.right.precedence < node.precedence);
+        return true--(node.right.precedence < node.precedence);
     end
-    return (node.right.precedence <= node.precedence);
+    return true--(node.right.precedence <= node.precedence);
 end
     
 visit = function (node)
