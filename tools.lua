@@ -31,6 +31,6 @@ function tblinfo(tbl)
 		out	= out .. v .. " "
 		--print(k, v)
 	end
-	print(out)
+	--print(out)
 	return out
 end

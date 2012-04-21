@@ -25,8 +25,6 @@ end
 
 function toRPN(expr)
 	
-	print("RPN'ing expr : " .. expr)
-	
 	local rpn_out	= {}
 	local rpn_stack	= {}
 	
@@ -132,3 +130,23 @@ function toRPN(expr)
 	
 	return rpn_out
 end
+
+
+function calculateRPN(s)
+  tb = {}
+  z = 0
+  for tk in string.gfind(s,'%S+') do
+    if string.find(tk,'^[-+*/]$')  then
+      if 2>table.getn(tb) then z = nil break end
+      y,x = table.remove(tb),table.remove(tb)
+      loadstring('z=x'..tk..'y')()
+    else
+      z = tonumber(tk)  if z==nil then break end
+    end
+    table.insert(tb,z)
+  end
+  n = table.getn(tb)
+  if n==1 and z then return(z)
+  elseif n>1 or z==nil then return('error') end
+end
+
