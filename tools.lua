@@ -99,6 +99,7 @@ function dump(name, reference)
 end
 
 function colorize(str)
+	str = tostring(str)
     str = str:gsub("%(",colors.yellow .. "%(" .. colors.reset)
    	str = str:gsub("%)",colors.yellow .. "%)" .. colors.reset)
    	str = str:gsub("%+",colors.cyan .. "%+" .. colors.reset)

@@ -19,21 +19,22 @@ repeat
 	io.flush()
 	local input=io.read()
    	if input:len()>0 then
+   	
    		print("   RPN expr is : " .. tblinfo(toRPN(input)))
-   		local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input)))--:sub(3)
-   		print("   Maybe improved input : " .. improvedRPN )
-   		--local coloredImprovedRPN = colorize(improvedRPN)
-   		--print("   Colored improved input : " .. coloredImprovedRPN)
-   	     --for w in string.gmatch(improvedRPN, "+%b()") do
-   		    --print(" "," ","Groups : ",w)
-  		 --end
+   		
+   		local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input))):sub(3)
+   		local coloredImprovedRPN = colorize(improvedRPN)
+   		print("   Colored improved input : " .. coloredImprovedRPN)
+   		
    		local simprpn = tblinfo(simpleit(simplify(toRPN(input))))
-		print("   RPN expr of simplified is : " .. simprpn or "error")
-		print("   Calculated RPN is " .. calculateRPN(simprpn) or "error")
-		print("   Simplified infix from RPN is : " .. colorize(convertRPN2Infix(simprpn)) or "error")
+		print("   RPN expr of simplified is : " .. colorize(simprpn))
+		print("   Calculated RPN is " .. colorize(calculateRPN(simprpn)))
+		print("   Simplified infix from RPN is : " .. colorize(convertRPN2Infix(simprpn)))
+		
 		local resimp = tblinfo(simplify(toRPN(convertRPN2Infix(simprpn))))
-		print("   Re-simplified RPN : " .. colorize(resimp) or "error")
+		print("   Re-simplified RPN : " .. colorize(resimp))
 		print("   Infix from that ^ : " .. colorize(convertRPN2Infix(resimp)))
+		
 		io.write("\n")
 		io.flush()
 	end
