@@ -82,7 +82,7 @@ function needParensOnRight(node)
     if (node.right.kind == "number" or node.right.kind == "variable") then
         return false
     end
-    if ((node.operator == "+") or (node.operator == "*")) then
+    if (node.operator == "+") or (node.operator == "*") then
         return true --(node.right.precedence < node.precedence)
     end
     return true --(node.right.precedence <= node.precedence)
