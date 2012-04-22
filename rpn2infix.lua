@@ -1,4 +1,16 @@
-makeNumberNode = function (number)
+--------------------------------------
+----           LuaCAS             ----
+----            v0.1              ----
+----                              ----
+----  Adrien 'Adriweb' Bertrand   ----
+----            2012              ----
+----                              ----
+----         GPL License          ----
+--------------------------------------
+-- Lua Port and additions/fixes by Adriweb from : 
+-- http://blog.boyet.com/blog/blog/postfix-to-infix-part-2-adding-the-parentheses/
+
+function makeNumberNode(number)
     local node = {
         kind  = "number",
         value = number
@@ -6,7 +18,7 @@ makeNumberNode = function (number)
     return node
 end
 
-makeVariableNode = function (var)
+function makeVariableNode(var)
 	local node = {
         kind  = "variable",
         value = var
@@ -14,10 +26,10 @@ makeVariableNode = function (var)
     return node
 end
     
-makeOpNode = function (op, left, right)
-    local precedence = 1;
-    if ((op == "*") or (op == "/")) then
-        precedence = 2;
+function makeOpNode(op, left, right)
+    local precedence = 1
+    if (op == "*") or (op == "/") then
+        precedence = 2
     end
     local node = {
         kind       = "operator",
@@ -29,7 +41,7 @@ makeOpNode = function (op, left, right)
     return node
 end
     
-convertRPN2Tree = function (rpnExpr)
+function convertRPN2Tree(rpnExpr)
     local stack = {}
     local i=0, ch, rhs, lhs
     
@@ -38,18 +50,18 @@ convertRPN2Tree = function (rpnExpr)
     	local j = i
     	ch = ""
     	while " "~=(string.sub(rpnExpr,j,j)) and j <= string.len(rpnExpr) do
-        	ch = ch .. string.sub(rpnExpr,j,j);
+        	ch = ch .. string.sub(rpnExpr,j,j)
         	j=j+1
         end
         if ch~=" " and ch ~= "" then
 			if isNumeric(ch) then
-				stackPush(stack,makeNumberNode(ch));
+				stackPush(stack,makeNumberNode(ch))
 			elseif string.find("*-+/^",ch) then
-				rhs = stackPop(stack);
-				lhs = stackPop(stack);
-				stackPush(stack,makeOpNode(ch, lhs, rhs));
+				rhs = stackPop(stack)
+				lhs = stackPop(stack)
+				stackPush(stack,makeOpNode(ch, lhs, rhs))
 			else
-				stackPush(stack,makeVariableNode(ch));
+				stackPush(stack,makeVariableNode(ch))
 			end
 			if i+string.len(ch) > string.len(rpnExpr) then
         		i=i+1
@@ -59,44 +71,44 @@ convertRPN2Tree = function (rpnExpr)
         end
     end        
         
-    return stackPop(stack);
+    return stackPop(stack)
 end
     
-needParensOnLeft = function (node)
+function needParensOnLeft(node)
     return (node.left.kind == "operator") and (node.left.precedence < node.precedence)
 end
     
-needParensOnRight = function (node)
+function needParensOnRight(node)
     if (node.right.kind == "number" or node.right.kind == "variable") then
-        return false;
+        return false
     end
     if ((node.operator == "+") or (node.operator == "*")) then
-        return true--(node.right.precedence < node.precedence);
+        return true --(node.right.precedence < node.precedence)
     end
-    return true--(node.right.precedence <= node.precedence);
+    return true --(node.right.precedence <= node.precedence)
 end
     
-visit = function (node)
+function visit(node)
     if node.kind=="number" or node.kind=="variable" then
-        return node.value;
+        return node.value
     end
         
-    local lhs = visit(node.left);
+    local lhs = visit(node.left)
     if (needParensOnLeft(node)) then
-        lhs = '(' .. lhs .. ')';
+        lhs = '(' .. lhs .. ')'
     end
         
-    local rhs = visit(node.right);
+    local rhs = visit(node.right)
     if (needParensOnRight(node)) then
-        rhs = '(' .. rhs .. ')';
+        rhs = '(' .. rhs .. ')'
     end
         
-    return lhs .. node.operator .. rhs;
+    return lhs .. node.operator .. rhs
 end
   
-convertRPN2Infix = function (rpnExpr)
-    local tree = convertRPN2Tree(rpnExpr);
+function convertRPN2Infix(rpnExpr)
+    local tree = convertRPN2Tree(rpnExpr)
     --dump("tree",tree)
-    local infixExpr = tree and visit(tree) or "error";
+    local infixExpr = tree and visit(tree) or "error"
     return infixExpr
 end

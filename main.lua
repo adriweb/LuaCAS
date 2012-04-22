@@ -25,7 +25,7 @@ repeat
    		local coloredImprovedRPN = colorize(improvedRPN)
    		print("   Colored improved input : " .. coloredImprovedRPN)
    	     for w in string.gmatch(improvedRPN, "+%b()") do
-   		    print(" "," ","Groups : ",w)
+   		    --print(" "," ","Groups : ",w)
   		 end
    		local simprpn = tblinfo(simplify(toRPN(input)))
 		print("   RPN expr of simplified is : " .. simprpn or "error")
