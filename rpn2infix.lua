@@ -63,8 +63,7 @@ convertRPN2Tree = function (rpnExpr)
 end
     
 needParensOnLeft = function (node)
-    return ((node.left.kind == "operator") and
-            (node.left.precedence < node.precedence));
+    return (node.left.kind == "operator") and (node.left.precedence < node.precedence)
 end
     
 needParensOnRight = function (node)

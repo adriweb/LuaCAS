@@ -8,8 +8,14 @@ repeat
 	io.flush()
 	local input=io.read()
    	if input:len()>0 then
-   		print("   RPN expr is : " .. tblinfo(toRPN(input)) or "error")
-   		print("   Maybe improved input : " .. convertRPN2Infix(tblinfo(toRPN("0+" .. input))):sub(3) or "error") -- hacky but works
+   		print("   RPN expr is : " .. tblinfo(toRPN(input)))
+   		local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input)))--:sub(3)
+   		print("   Maybe improved input : " .. improvedRPN )
+   		improvedRPN = colorize(improvedRPN)
+   		print("   Colored improved input : " .. improvedRPN)
+   	     for w in string.gmatch(improvedRPN, "+%b()") do
+   		    print(" "," ","Groups : ",w)
+  		 end
    		local simprpn = tblinfo(simplify(toRPN(input)))
 		print("   RPN expr of simplified is : " .. simprpn or "error")
 		print("   Calculated RPN is " .. calculateRPN(simprpn) or "error")

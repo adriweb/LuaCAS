@@ -1,3 +1,5 @@
+local colors = require 'ansicolors'
+
 function string:split(pattern)
 	self_type = type(self)
 	pattern_type = type(pattern)
@@ -23,6 +25,16 @@ function string:split(pattern)
 		start = e + 1
 	end
 	return list
+end
+
+function string:split2(pat)
+  pat = pat or '%s+'
+  local st, g = 1, self:gmatch("()("..pat..")")
+  local function getter(segs, seps, sep, cap1, ...)
+    st = sep and seps + #sep
+    return self:sub(segs, (seps or 0) - 1), cap1 or sep, ...
+  end
+  return function() if st then return getter(st, g()) end end
 end
 
 function tblinfo(tbl)
@@ -74,4 +86,17 @@ function dump(name, reference)
 	else
 		print(add .. name, "-", reference)
 	end
+end
+
+function colorize(str)
+    str = str:gsub("%(",colors.yellow .. "%(" .. colors.reset)
+   	str = str:gsub("%)",colors.yellow .. "%)" .. colors.reset)
+   	str = str:gsub("%+",colors.cyan .. "%+" .. colors.reset)
+   	str = str:gsub("-",colors.cyan .. "-" .. colors.reset)
+   	str = str:gsub("%*",colors.cyan .. "%*" .. colors.reset)
+   	str = str:gsub("%/",colors.cyan .. "%/" .. colors.reset)
+   	str = str:gsub("%^",colors.cyan .. "%^" .. colors.reset)
+   	-- do for variables (but that will change the way we analyze :  check for previous and next char to see if also char (then its a function, or, if not (check if func) then it's a multi-char variable ..)
+   	
+	return str
 end
