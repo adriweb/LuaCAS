@@ -1,3 +1,15 @@
+--------------------------------------
+----           LuaCAS             ----
+----            v0.1              ----
+----                              ----
+----  Adrien 'Adriweb' Bertrand   ----
+----            2012              ----
+----                              ----
+----         GPL License          ----
+--------------------------------------
+-- Parts also by Jim Bauwens
+
+
 function isClean(n)
 	return math.floor(n) == n
 end

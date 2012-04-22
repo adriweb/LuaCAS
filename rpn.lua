@@ -1,3 +1,15 @@
+--------------------------------------
+----           LuaCAS             ----
+----            v0.1              ----
+----                              ----
+----  Adrien 'Adriweb' Bertrand   ----
+----            2012              ----
+----                              ----
+----         GPL License          ----
+--------------------------------------
+-- This part mainly by Jim Bauwens
+-- Shunting-Yard Algorithm
+
 
 operator	= {}
 operator["^"]	= {4, 1, function (a, b) return a^b end}

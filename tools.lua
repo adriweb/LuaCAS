@@ -1,3 +1,13 @@
+--------------------------------------
+----           LuaCAS             ----
+----            v0.1              ----
+----                              ----
+----  Adrien 'Adriweb' Bertrand   ----
+----            2012              ----
+----                              ----
+----         GPL License          ----
+--------------------------------------
+
 local colors = require 'ansicolors'
 
 function string:split(pattern)
