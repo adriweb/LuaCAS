@@ -72,7 +72,7 @@ function create1x(rpn, start)
 	return rpn
 end
 
-function sortit2(rpn)
+function sortit2(rpn, offs)
 	mstable(rpn)
 	local len	= #rpn
 	local token
@@ -102,7 +102,7 @@ function sortit2(rpn)
 		end
 
 
-		local done, off	= simpgroup(rpn, pos-j, pos + 2 + j, op)
+		local done, off = simpgroup(rpn, pos-j, pos + 2 + j, op)
 		sortit2(rpn, off)
 		return rpn
 	else
