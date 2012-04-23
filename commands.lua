@@ -25,5 +25,5 @@ function checkCommand(input)
 end
 
 function doCommand(cmd)
-	commands[cmd]
+	commands[cmd]()
 end
