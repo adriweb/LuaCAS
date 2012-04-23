@@ -15,11 +15,11 @@ dofile 'rpn2infix.lua'
 dofile 'commands.lua'
 
 showDebug = false
-
-while true do
+input = ""
+while input ~= "exit" do
 	io.write("luaCAS> ")
 	io.flush()
-	local input=io.read()
+	input=io.read()
    	if input:len()>0 then
 		
 		symbolify(input)
