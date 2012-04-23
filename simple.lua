@@ -41,9 +41,11 @@ end
 
 function simplify(rpn)
 	replaceNegative(rpn)
+	create1x(rpn)
 	sortit(rpn)
-	simpleFactor(rpn)
+	--simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
+
 	return rpn
 end
 
@@ -52,10 +54,21 @@ function infixSimplify(infix)
 	return infix
 end
 
-function create1x(infix)
-	infix = string.gsub(infix,"+x","+1*x")
-	infix = string.gsub(infix,"-x","-1*x")
-	return infix
+function create1x(rpn, start)
+	local token
+	for i=(start or 1), #rpn do
+		token	= rpn[i]
+		if not tonumber(token) and not operator[token] then
+			table.remove(rpn, i)
+			table.insert(rpn, i, "*")
+			table.insert(rpn, i, token)
+			table.insert(rpn, i, "1")
+			create1x(rpn, i+2)
+			break
+		end
+	end
+	
+	return rpn
 end
 
 function delete1x(infix)
@@ -121,7 +134,7 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 	for k, value in ipairs(group) do
 		table.insert(rpn, posa+k-1, value)
 	end
-	
+
 	return not compareTable(oldrpn, rpn)
 end
 
@@ -140,7 +153,7 @@ function findgroup(rpn, pos, ro)
 		c	= rpn[i]
 		o	= rpn[i+1]
 		
-		if o ~= ro then
+		if o ~= ro or operator[c] then
 			return i-1
 		end 
 	end
@@ -177,7 +190,6 @@ function sortit(rpn)
 			
 			-- Simplify (if it can) the group.
 			local done	= simpgroup(rpn, i, posb, o, operator[a] and a)
-			
 			-- If there are changes, try to simplify it again. This is currently recursive, should change to non-recursive.
 			if done then
 				sortit(rpn)
@@ -259,5 +271,4 @@ function replaceNegative(t)
 		end
 	end
 end
-
 
