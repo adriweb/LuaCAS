@@ -68,7 +68,7 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 	
 	-- We need to handle these stuff different. This is for later, as currently they can give faulty results
 	-- We should change add negative sign's to numbers and create a special rational number type
-	if o == "/"  or o =="-" then
+	if o == "/"  or o =="-" or o =="^" then
 		return
 	end
 	
