@@ -72,17 +72,7 @@ function create1x(rpn, start)
 	return rpn
 end
 
-<<<<<<< HEAD
 function sortit2(rpn)
-=======
-function delete1x(infix)
-	infix = string.gsub(infix,"+1*x","+x")
-	infix = string.gsub(infix,"-1*x","-x")
-	return infix
-end
-
-function sortit2(rpn, offs)
->>>>>>> f26a3c7d8b0e44e1d3cb48537e03b56ad2424dc9
 	mstable(rpn)
 	local len	= #rpn
 	local token
