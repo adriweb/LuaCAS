@@ -43,7 +43,8 @@ function simplify(rpn)
 	replaceNegative(rpn)
 	create1x(rpn)
 	sortit(rpn)
-	--simpleFactor(rpn)
+	sortit2(rpn)
+	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
 
 	return rpn
@@ -76,6 +77,51 @@ function delete1x(infix)
 	infix = string.gsub(infix,"-1*x","-x")
 	return infix
 end
+
+function sortit2(rpn)
+	mstable(rpn)
+	local len	= #rpn
+	local token
+	local op
+	
+	local pos
+	for i=1, len do
+		a	= rpn[i]
+		b	= rpn[i+1]
+		o	= rpn[i+2]
+		if not operator[a] and not operator[b] and operator[o] then
+			pos	= i
+			op	= o
+			break
+		end
+	end
+	
+
+	if pos then
+		local j	= 0
+		for i=pos+3, len do 
+			j	= j+1
+			if not (op == rpn[i] and not operator[rpn[pos-j]]) then
+				j	= j-1
+				break
+			end
+		end
+		
+		if j == 0 then 
+			return rpn
+		end
+
+		local done	= simpgroup(rpn, pos-j, pos + 3 + j, op)
+
+		if done then
+			--sortit2(rpn)
+			return rpn
+		end
+	else
+		return rpn
+	end
+end
+
 
 -- Create a new RPN valid group from data values. startgroup ('a') is need to fix the previous RPN group
 function creategroup(datatable, operator, startgroup)

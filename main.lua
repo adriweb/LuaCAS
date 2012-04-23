@@ -14,7 +14,7 @@ dofile 'simple.lua'
 dofile 'rpn2infix.lua'
 dofile 'commands.lua'
 
-showDebug = false
+showDebug = true
 
 while true do
 	io.write("luaCAS> ")
