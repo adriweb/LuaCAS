@@ -188,7 +188,7 @@ end
 
 function replaceNegative(t)
 	for i=1,#t-1,1 do
-		if strType(t[i]) == number and t[i+1] == "-" then
+		if strType(t[i]) == "numeric" and t[i+1] == "-" then
 			t[i] = "-" .. t[i]
 			t[i+1] = "+"
 		end
