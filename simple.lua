@@ -41,7 +41,7 @@ end
 
 function simplify(rpn)
 	replaceNegative(rpn)
-	create1x(rpn)
+	--create1x(rpn)
 	sortit(rpn)
 	sortit2(rpn)
 	simpleFactor(rpn)
@@ -51,7 +51,7 @@ function simplify(rpn)
 end
 
 function infixSimplify(infix)
-	
+	-- useless ?
 	return infix
 end
 
@@ -72,6 +72,7 @@ function create1x(rpn, start)
 	return rpn
 end
 
+<<<<<<< HEAD
 function delete1x(infix)
 	infix = string.gsub(infix,"+1*x","+x")
 	infix = string.gsub(infix,"-1*x","-x")
@@ -79,6 +80,9 @@ function delete1x(infix)
 end
 
 function sortit2(rpn, off)
+=======
+function sortit2(rpn)
+>>>>>>> simbolify creation
 	mstable(rpn)
 	local len	= #rpn
 	local token
@@ -313,5 +317,10 @@ function replaceNegative(t)
 			t[i+1] = "+"
 		end
 	end
+end
+
+function symbolify(infix)
+	-- string.gsub(infix,"π","pi")  -- do stuff like that but check it's a variable name alone. Not part of a bigger var name.
+	return infix
 end
 

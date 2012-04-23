@@ -22,6 +22,7 @@ while true do
 	local input=io.read()
    	if input:len()>0 then
 		
+		symbolify(input)
 		checkCommand(input)
 				
 		debugPrint("   RPN expr is : " .. tblinfo(toRPN(input)))
