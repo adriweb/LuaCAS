@@ -159,6 +159,6 @@ function calculateRPN(s)
   end
   n = table.getn(tb)
   if n==1 and z then return(z)
-  elseif n>1 or z==nil then return('error (variables/symbols there ?)') end
+  elseif n>1 or z==nil then return('var error') end
 end
 

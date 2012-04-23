@@ -34,7 +34,12 @@ while true do
 		debugPrint("   RPN expr of simplified is : " .. colorize(simprpn))
 		debugPrint("   Calculated RPN is " .. colorize(calculateRPN(simprpn)))
 		
-		local finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input)))):sub(3)
+		if calculateRPN(simprpn) == "var error" then
+			debugPrint("got variable error in calculateRPN!")
+			finalRes = convertRPN2Infix(simprpn)
+		else
+			finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))))
+		end
 		debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
 		
 		if improvedRPN ~= finalRes then prettyDisplay(finalRes) end

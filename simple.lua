@@ -9,6 +9,8 @@
 --------------------------------------
 -- Parts also by Jim Bauwens
 
+needReSimplify = false
+
 function areNumeric(a,b)
 	return isNumeric(a) and isNumeric(b)
 end
@@ -40,7 +42,26 @@ end
 function simplify(rpn)
 	replaceNegative(rpn)
 	sortit(rpn)
+	simpleFactor(rpn)
+	if needReSimplify then simplify(rpn) end
 	return rpn
+end
+
+function infixSimplify(infix)
+	
+	return infix
+end
+
+function create1x(infix)
+	infix = string.gsub(infix,"+x","+1*x")
+	infix = string.gsub(infix,"-x","-1*x")
+	return infix
+end
+
+function delete1x(infix)
+	infix = string.gsub(infix,"+1*x","+x")
+	infix = string.gsub(infix,"-1*x","-x")
+	return infix
 end
 
 -- Create a new RPN valid group from data values. startgroup ('a') is need to fix the previous RPN group
@@ -73,7 +94,7 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 		return
 	end
 	
-	-- Remove the ENTIRE (and possible the last operator of the previous RPN group) and put the datavalues in a sepperate table
+	-- Remove the ENTIRE (and possible the last operator of the previous RPN group) and put the datavalues in a separate table
 	local d
 	for i=posa, posb do
 		d	= table.remove(rpn, posa)
@@ -168,8 +189,51 @@ function sortit(rpn)
 	return rpn
 end
 
+function simpleFactor(rpn)
+	local i=1
+	local oldrpn = copyTable(rpn)
+	while i<#rpn do
+		-- let's find in the RPN stack the place where there are two operators in a row.
+		-- The one at the end will be the global op and the one before will be the inside one.
+		if i>5 then -- minimum required to perform any factorization ([coeff1][insideOP1][var][globalOP][coeff2][insideOP2][var])
+					-- which is in RPN : [coeff1][var][insideOP1][coeff2][var][insideOP2][globalOP]
+			insideOP2 = rpn[i]
+			insideOP1 = rpn[i-3]
+			globalOP = rpn[i+1]
+			coeff1 = rpn[i-5]
+			coeff2 = rpn[i-2]
+			var1 = rpn[i-4]
+			var2 = rpn[i-4]
+			
+			--print("hello world factor ?",coeff1,insideOP1,var1,globalOP,coeff2,insideOP2,var2)
 
-
+			if strType(insideOP2) == "operator" and strType(globalOP) == "operator" then
+				if insideOP1 == insideOP2 then
+					-- Get coefficients for the each inner part
+					-- Check for good (expected) types.  TO IMPROVE ! 2*x == x*2. Please re-order everything before !!!
+					if strType(coeff1) == "numeric" and strType(coeff2) == "numeric" then -- todo : support variable coeffs.
+						-- Get the variables for each coeff. Then check if it's the same variables we're dealing with.
+						if var1 == var2 then
+							debugPrint("simpleFactorisation possible. Doing it.")
+							-- Well, it's all good ! Let's factor all that.
+							-- in infix : [(][coeff1][globalOP][Coeff2][)][insideOP][Variable1]
+							-- in RPN : [coeff1][coeff2][globalOP][var][insideOP1]
+							rpn[i-4] = coeff2
+							rpn[i-3] = globalOP
+							rpn[i-2] = var1
+							rpn[i-1] = insideOP1
+							table.remove(rpn,i)
+							table.remove(rpn,i)
+						end
+					end
+				end
+			end
+		end
+		i=i+1
+	end
+	if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
+	return rpn
+end
 
 function cc(tbl)
 	out	= ""

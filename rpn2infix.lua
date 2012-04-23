@@ -106,7 +106,8 @@ function visit(node)
     return lhs .. node.operator .. rhs
 end
   
-function convertRPN2Infix(rpnExpr)
+function convertRPN2Infix(rpnExpr) -- input and output are strings
+	if strType(rpnExpr) == "numeric" then return rpnExpr end
     local tree = convertRPN2Tree(rpnExpr)
     --dump("tree",tree)
     local infixExpr = tree and visit(tree) or "error"
