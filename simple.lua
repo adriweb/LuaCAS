@@ -75,40 +75,50 @@ function simplify(rpn)
 	return rpn
 end
 
-function sortgroup(rpn, posa, posb)
+function sortgroup(rpn, posa, posb, startgroup)
 	local sorttable	= {}
-	table.insert(sorttable, rpn[posa])
+	if startgroup then
+		table.insert(sorttable, rpn[posa])
+	end
+	
 	table.insert(sorttable, rpn[posa+1])
 	for i=posa+3, posb, 2 do
 		table.insert(sorttable, rpn[i])
 	end
 	table.sort(sorttable)
+
+
+	local j	= 1
+	if startgroup then	
+		rpn[posa]	= sorttable[j]
+		j	= j+1
+	end
 	
-	rpn[posa]	= sorttable[1]
-	rpn[posa+1]	= sorttable[2]
-	local j	= 2
+	rpn[posa+1]	= sorttable[j]
+	
 	for i=posa+3, posb, 2 do
 		j	= j+1
 		rpn[i]	= sorttable[j]
 	end	
 end
 
-function findgroup(rpn, pos, ro)
+function findgroup(rpn, pos, ro, startgroup)
 	local len	= #rpn
 	local posa = pos
 	if len<pos+3 then
 		return pos+2
 	end
-	local c, o, out
+	local c, o
+	local out	= pos + 2
 	for i=pos+3, len-1, 2 do
+		out	= i
 		c	= rpn[i]
 		o	= rpn[i+1]
 		if o ~= ro then
 			return i-1
 		end 
-		out	= i
 	end
-	
+
 	return out
 end
 
@@ -127,9 +137,9 @@ function sortit(rpn)
 		local a	= rpn[i]
 		local b	= rpn[i+1]
 		local o	= rpn[i+2]
-		if not operator[a] and not operator[b] and operator[o] then -- this means for example "3 5 *"
-			local posb	= findgroup(rpn, i, o)
-			sortgroup(rpn, i, posb)
+		if not operator[b] and operator[o] then -- this means for example "3 5 *"
+			local posb	= findgroup(rpn, i, o, not operator[a])
+			sortgroup(rpn, i, posb, not operator[a])
 			--breakuntil	= posb + 1
 		end
 	end
