@@ -34,10 +34,10 @@ while true do
 		debugPrint("   RPN expr of simplified is : " .. colorize(simprpn))
 		debugPrint("   Calculated RPN is " .. colorize(calculateRPN(simprpn)))
 		
-		local finalRes = convertRPN2Infix(simprpn)
+		local finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input)))):sub(3)
 		debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
-	
-		prettyDisplay(finalRes)
+		
+		if improvedRPN ~= finalRes then prettyDisplay(finalRes) end
 				
 		io.write("\n")
 		io.flush()
