@@ -62,6 +62,11 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 	local n	= posb-posa		-- The length of the RPN group we are handling
 	local datatable	= {}
 	
+	-- We need to handle these stuff different. This is for later, as currently they can give faulty results
+	-- We should change add negative sign's to numbers and create a special rational number type
+	if o == "/"  or o =="-" then
+		return
+	end
 	
 	-- Remove the ENTIRE (and possible the last operator of the previous RPN group) and put the datavalues in a sepperate table
 	local d
@@ -78,10 +83,9 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 	
 	-- combine numbers together
 	local n1, n2
-	if o ~= "/" then
-		while tonumber(datatable[1]) and tonumber(datatable[2]) do
-			datatable[1]	= operator[o][3](datatable[1], table.remove(datatable, 2))
-		end
+	
+	while tonumber(datatable[1]) and tonumber(datatable[2]) do
+		datatable[1]	= operator[o][3](datatable[1], table.remove(datatable, 2))
 	end
 	
 	-- create a RPN valid group of the remaining data values
@@ -109,9 +113,10 @@ function findgroup(rpn, pos, ro)
 	local c, o
 	local out	= pos + 2
 	for i=pos+3, len-1, 2 do
-		out	= i
+		out	= i+1
 		c	= rpn[i]
 		o	= rpn[i+1]
+		
 		if o ~= ro then
 			return i-1
 		end 
