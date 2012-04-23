@@ -41,7 +41,7 @@ end
 
 function simplify(rpn)
 	replaceNegative(rpn)
-	create1x(rpn)
+	--create1x(rpn)
 	sortit(rpn)
 	sortit2(rpn)
 	simpleFactor(rpn)
@@ -78,14 +78,14 @@ function delete1x(infix)
 	return infix
 end
 
-function sortit2(rpn, off)
+function sortit2(rpn, offs)
 	mstable(rpn)
 	local len	= #rpn
 	local token
 	local op
 	
 	local pos
-	for i=(off or 1), len do
+	for i=(offs or 1), len do
 		a	= rpn[i]
 		b	= rpn[i+1]
 		o	= rpn[i+2]
@@ -109,11 +109,8 @@ function sortit2(rpn, off)
 
 
 		local done, off	= simpgroup(rpn, pos-j, pos + 2 + j, op)
-
-		if done then
-			sortit2(rpn, off)
-			return rpn
-		end
+		sortit2(rpn, off)
+		return rpn
 	else
 		return rpn
 	end
