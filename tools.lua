@@ -7,7 +7,7 @@
 ----                              ----
 ----         GPL License          ----
 --------------------------------------
-
+ 
 local colors = require 'ansicolors'
 
 function debugPrint(...)

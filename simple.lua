@@ -8,7 +8,7 @@
 ----         GPL License          ----
 --------------------------------------
 -- Parts also by Jim Bauwens
-
+ 
 needReSimplify = false
 
 function areNumeric(a,b)

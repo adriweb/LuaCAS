@@ -9,7 +9,7 @@
 --------------------------------------
 -- Lua Port and additions/fixes by Adriweb from : 
 -- http://blog.boyet.com/blog/blog/postfix-to-infix-part-2-adding-the-parentheses/
-
+ 
 function makeNumberNode(number)
     local node = {
         kind  = "number",

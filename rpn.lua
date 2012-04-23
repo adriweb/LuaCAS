@@ -10,7 +10,6 @@
 -- This part mainly by Jim Bauwens
 -- Shunting-Yard Algorithm
 
-
 operator	= {}
 operator["^"]	= {4, 1, function (a, b) return a^b end}
 operator["*"]	= {3,-1, function (a, b) return a*b end}
