@@ -72,14 +72,24 @@ function create1x(rpn, start)
 	return rpn
 end
 
+<<<<<<< HEAD
 function sortit2(rpn)
+=======
+function delete1x(infix)
+	infix = string.gsub(infix,"+1*x","+x")
+	infix = string.gsub(infix,"-1*x","-x")
+	return infix
+end
+
+function sortit2(rpn, offs)
+>>>>>>> f26a3c7d8b0e44e1d3cb48537e03b56ad2424dc9
 	mstable(rpn)
 	local len	= #rpn
 	local token
 	local op
 	
 	local pos
-	for i=(off or 1), len do
+	for i=(offs or 1), len do
 		a	= rpn[i]
 		b	= rpn[i+1]
 		o	= rpn[i+2]
@@ -103,11 +113,8 @@ function sortit2(rpn)
 
 
 		local done, off	= simpgroup(rpn, pos-j, pos + 2 + j, op)
-
-		if done then
-			sortit2(rpn, off)
-			return rpn
-		end
+		sortit2(rpn, off)
+		return rpn
 	else
 		return rpn
 	end
