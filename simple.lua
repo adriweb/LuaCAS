@@ -78,14 +78,14 @@ function delete1x(infix)
 	return infix
 end
 
-function sortit2(rpn)
+function sortit2(rpn, off)
 	mstable(rpn)
 	local len	= #rpn
 	local token
 	local op
 	
 	local pos
-	for i=1, len do
+	for i=(off or 1), len do
 		a	= rpn[i]
 		b	= rpn[i+1]
 		o	= rpn[i+2]
@@ -106,15 +106,12 @@ function sortit2(rpn)
 				break
 			end
 		end
-		
-		if j == 0 then 
-			return rpn
-		end
 
-		local done	= simpgroup(rpn, pos-j, pos + 3 + j, op)
+
+		local done, off	= simpgroup(rpn, pos-j, pos + 2 + j, op)
 
 		if done then
-			--sortit2(rpn)
+			sortit2(rpn, off)
 			return rpn
 		end
 	else
@@ -157,12 +154,10 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 	local d
 	for i=posa, posb do
 		d	= table.remove(rpn, posa)
-		
 		if not operator[d] then 
 			table.insert(datatable, d)
 		end
 	end
-	
 	-- Sort the table, so we can easily simplify it
 	table.sort(datatable)	-- sort the datatable
 	
@@ -181,7 +176,7 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 		table.insert(rpn, posa+k-1, value)
 	end
 
-	return not compareTable(oldrpn, rpn)
+	return not compareTable(oldrpn, rpn), posa+#group-1
 end
 
 function findgroup(rpn, pos, ro)
