@@ -59,6 +59,7 @@ function simplify(rpn)
 				end
 				
 				if sim then
+					print(n1, n2)
 					local solution = operator[op][3](n1, n2)
 					for i=1,3 do table.remove(rpn, pos-2) end
 					table.insert(rpn, pos-2, solution)
@@ -78,7 +79,6 @@ function sortgroup(rpn, posa, posb)
 	local sorttable	= {}
 	table.insert(sorttable, rpn[posa])
 	table.insert(sorttable, rpn[posa+1])
-	
 	for i=posa+3, posb, 2 do
 		table.insert(sorttable, rpn[i])
 	end
@@ -99,17 +99,17 @@ function findgroup(rpn, pos, ro)
 	if len<pos+3 then
 		return pos+2
 	end
-	local c, o, i
+	local c, o, out
 	for i=pos+3, len-1, 2 do
 		c	= rpn[i]
 		o	= rpn[i+1]
-		
 		if o ~= ro then
 			return i-1
 		end 
+		out	= i
 	end
 	
-	return len
+	return out
 end
 
 function simpleit(rpn)
@@ -130,7 +130,7 @@ function simpleit(rpn)
 		if not operator[a] and not operator[b] and operator[o] then -- this means for example "3 5 *"
 			local posb	= findgroup(rpn, i, o)
 			sortgroup(rpn, i, posb)
-			breakuntil	= posb + 1
+			--breakuntil	= posb + 1
 		end
 	end
 	
