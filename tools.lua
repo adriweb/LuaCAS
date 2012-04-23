@@ -10,6 +10,10 @@
 
 local colors = require 'ansicolors'
 
+function debugPrint(...)
+	if showDebug then print(...) end
+end
+
 function string:split(pattern)
 	self_type = type(self)
 	pattern_type = type(pattern)
@@ -137,4 +141,8 @@ function copyTable(tbl)
 		out[k]	= v
 	end
 	return out
+end
+
+function prettyDisplay(str)
+	print("     =  " .. colorize(str))
 end
