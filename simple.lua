@@ -41,12 +41,9 @@ end
 
 function simplify(rpn)
 	replaceNegative(rpn)
-	--create1x(rpn)
+	create1x(rpn)
 	sortit(rpn)
-<<<<<<< HEAD
 	sortit2(rpn)
-=======
->>>>>>> better simpleFactor, again
 	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
 
