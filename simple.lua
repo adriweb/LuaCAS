@@ -38,6 +38,7 @@ function div(a,b)
 end	
 
 function simplify(rpn)
+	sortit(rpn)
 	local pos	= 0
 	local n1, n2, op
 	
@@ -59,7 +60,6 @@ function simplify(rpn)
 				end
 				
 				if sim then
-					print(n1, n2)
 					local solution = operator[op][3](n1, n2)
 					for i=1,3 do table.remove(rpn, pos-2) end
 					table.insert(rpn, pos-2, solution)
@@ -112,8 +112,8 @@ function findgroup(rpn, pos, ro)
 	return out
 end
 
-function simpleit(rpn)
-
+function sortit(rpn)
+	mstable(rpn)
 	local len	= #rpn
 	local cgroup	= {}
 	local breakuntil	= 0

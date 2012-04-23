@@ -111,3 +111,11 @@ function colorize(str)
    	
 	return str
 end
+
+
+function mstable(tbl)
+	for k,v in ipairs(tbl) do
+		tbl[k]	= tostring(v)
+	end
+	return tbl
+end

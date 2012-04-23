@@ -26,14 +26,10 @@ repeat
    		local coloredImprovedRPN = colorize(improvedRPN)
    		print("   Colored improved input : " .. coloredImprovedRPN)
    		
-   		local simprpn = tblinfo(simpleit(simplify(toRPN(input))))
+   		local simprpn = tblinfo(simplify(toRPN(input)))
 		print("   RPN expr of simplified is : " .. colorize(simprpn))
 		print("   Calculated RPN is " .. colorize(calculateRPN(simprpn)))
 		print("   Simplified infix from RPN is : " .. colorize(convertRPN2Infix(simprpn)))
-		
-		local resimp = tblinfo(simplify(toRPN(convertRPN2Infix(simprpn))))
-		print("   Re-simplified RPN : " .. colorize(resimp))
-		print("   Infix from that ^ : " .. colorize(convertRPN2Infix(resimp)))
 		
 		io.write("\n")
 		io.flush()
