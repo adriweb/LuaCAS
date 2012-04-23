@@ -43,7 +43,7 @@ while true do
 		end
 		debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
 		
-		if improvedRPN ~= finalRes then prettyDisplay(finalRes) end
+		if improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input) then prettyDisplay(finalRes) end
 				
 		io.write("\n")
 		io.flush()
