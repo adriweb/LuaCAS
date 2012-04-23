@@ -39,40 +39,54 @@ end
 
 function simplify(rpn)
 	sortit(rpn)
-	local pos	= 0
-	local n1, n2, op
+	return rpn
+end
+
+function creategroup(datatable, operator, startgroup)
+	local group	=	{}
 	
-	while true do 
-		pos	= pos + 1
-		n1	= tonumber(rpn[pos-2]) -- isNumeric(rpn[pos-2]) and tonumber(rpn[pos-2]) or rpn[pos-2]
-		n2	= tonumber(rpn[pos-1]) -- isNumeric(rpn[pos-1]) and tonumber(rpn[pos-1]) or rpn[pos-1]
-		op	= rpn[pos]
-		--if strType(op)=="operator" then print(n1,op,n2) end
-		if pos<=#rpn then
-			if n1 and n2 and operator[op] then
-				local sim, a, b	= true
-				if op == "/" then
-					sim, a, b	= div(n1, n2)
-					if not sim then 
-						rpn[pos-2] = a
-						rpn[pos-1] = b
-					end
-				end
-				
-				if sim then
-					local solution = operator[op][3](n1, n2)
-					for i=1,3 do table.remove(rpn, pos-2) end
-					table.insert(rpn, pos-2, solution)
-					return simplify(rpn)
-				end
-			end
-		else
-			break
-		end
-		
+	group[1]	= startgroup or table.remove(datatable, 1)
+
+	for _, value in ipairs(datatable) do
+		table.insert(group, tostring(value))	-- tostring to be sure all data is in strings when we put it back in the RPN table
+		table.insert(group, operator)
 	end
 	
-	return rpn
+	return group
+end
+
+function simpgroup(rpn, posa, posb, o, startgroup)
+	local len	= #rpn
+	local n	= posb-posa		-- The length of the RPN group we are handling
+	local datatable	= {}
+	
+	local d
+	for i=posa, posb do
+		d	= table.remove(rpn, posa) -- Remove the whole group from the RPN table
+		
+		if not operator[d] then 
+			table.insert(datatable, d)
+		end
+	end
+	
+	table.sort(datatable)	-- sort the datatable
+	
+	local n1, n2
+	if o ~= "/" then
+		while tonumber(datatable[1]) and tonumber(datatable[2]) do
+			datatable[1]	= operator[o][3](datatable[1], table.remove(datatable, 2))
+		end
+	end
+	
+	local group	= creategroup(datatable, o, startgroup)
+	
+	for k, value in ipairs(group) do
+		table.insert(rpn, posa+k-1, value)
+	end
+	
+	if len<#rpn then 
+		return true
+	end
 end
 
 function sortgroup(rpn, posa, posb, startgroup)
@@ -102,12 +116,14 @@ function sortgroup(rpn, posa, posb, startgroup)
 	end	
 end
 
-function findgroup(rpn, pos, ro, startgroup)
+function findgroup(rpn, pos, ro)
 	local len	= #rpn
 	local posa = pos
+	
 	if len<pos+3 then
 		return pos+2
 	end
+	
 	local c, o
 	local out	= pos + 2
 	for i=pos+3, len-1, 2 do
@@ -127,7 +143,7 @@ function sortit(rpn)
 	local len	= #rpn
 	local cgroup	= {}
 	local breakuntil	= 0
-	local i
+	local sortgroup
 	
 	for i=1, len-2 do 
 		if breakuntil>i then 
@@ -137,10 +153,13 @@ function sortit(rpn)
 		local a	= rpn[i]
 		local b	= rpn[i+1]
 		local o	= rpn[i+2]
-		if not operator[b] and operator[o] then -- this means for example "3 5 *"
-			local posb	= findgroup(rpn, i, o, not operator[a])
-			sortgroup(rpn, i, posb, not operator[a])
-			--breakuntil	= posb + 1
+		if not operator[b] and operator[o] then -- this means for example "5 5 *"
+			local posb	= findgroup(rpn, i, o)
+			local done	= simpgroup(rpn, i, posb, o, operator[a] and a)
+			if done then
+				sortit(rpn)
+				break
+			end
 		end
 	end
 	
