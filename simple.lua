@@ -62,6 +62,10 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 	local n	= posb-posa		-- The length of the RPN group we are handling
 	local datatable	= {}
 	
+	-- We might need to find another solution.
+	local oldrpn	= copyTable(rpn)
+	
+	
 	-- We need to handle these stuff different. This is for later, as currently they can give faulty results
 	-- We should change add negative sign's to numbers and create a special rational number type
 	if o == "/"  or o =="-" then
@@ -96,10 +100,7 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 		table.insert(rpn, posa+k-1, value)
 	end
 	
-	-- Return true if the size changed
-	if len<#rpn then 
-		return true
-	end
+	return not compareTable(oldrpn, rpn)
 end
 
 function findgroup(rpn, pos, ro)

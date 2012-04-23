@@ -119,3 +119,22 @@ function mstable(tbl)
 	end
 	return tbl
 end
+
+function compareTable(tbl1, tbl2) 
+	local len	= #tbl1
+	if len ~= #tbl2 then return false end
+	
+	for i=1, len do
+		if tbl1[i] ~= tbl2[i] then return false end
+	end
+	
+	return true
+end
+
+function copyTable(tbl)
+	local out	= {}
+	for k,v in pairs(tbl) do
+		out[k]	= v
+	end
+	return out
+end
