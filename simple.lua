@@ -186,5 +186,13 @@ function strType(str)
 	-- if string.find("sin",str) then return "function" end    --> do all other cases
 end
 
+function replaceNegative(t)
+	for i=1,#t-1,1 do
+		if strType(t[i]) == number and t[i+1] == "-" then
+			t[i] = "-" .. t[i]
+			t[i+1] = "+"
+		end
+	end
+end
 
 
