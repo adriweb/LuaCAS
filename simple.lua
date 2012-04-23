@@ -41,9 +41,12 @@ end
 
 function simplify(rpn)
 	replaceNegative(rpn)
-	create1x(rpn)
+	--create1x(rpn)
 	sortit(rpn)
+<<<<<<< HEAD
 	sortit2(rpn)
+=======
+>>>>>>> better simpleFactor, again
 	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
 
@@ -248,7 +251,6 @@ function sortit(rpn)
 end
 
 function simpleFactor(rpn)
-				
 
 	local i=1
 	local oldrpn = copyTable(rpn)
@@ -265,18 +267,17 @@ function simpleFactor(rpn)
 			var1 = rpn[i+1]
 			var2 = rpn[i+4]
 			
-			print("hello world factor ?",coeff1 .. " " .. insideOP1.. " " .. var1.. " " .. globalOP.. " " .. coeff2.. " " .. insideOP2.. " " .. var2)
-			print("hello world    ? rpn",tblinfo(rpn))
+			--print("hello world factor ?",coeff1 .. " " .. insideOP1.. " " .. var1.. " " .. globalOP.. " " .. coeff2.. " " .. insideOP2.. " " .. var2)
+			--print("hello world    ? rpn",tblinfo(rpn))
 			if strType(insideOP2) == "operator" and strType(globalOP) == "operator" then
 				if insideOP1 == insideOP2 then
-				-- if (insideOP1 == "+" or insideOP1 == "-") and (insideOP2 == "+" or insideOP2 == "-") then
 
 					-- Get coefficients for the each inner part
-					-- Check for good (expected) types.  TO IMPROVE ! 2*x == x*2. Please re-order everything before !!!
-					if strType(coeff1) == "numeric" and strType(coeff2) == "numeric" then -- todo : support variable coeffs.
+					-- Check for good (expected) types.
+					if (strType(coeff1) == "numeric" or strType(coeff1) == "variable") and (strType(coeff2) == "numeric" or strType(coeff2) == "variable") then -- todo : support variable coeffs.
 						-- Get the variables for each coeff. Then check if it's the same variables we're dealing with.
 						if var1 == var2 then
-							print("simpleFactorisation possible. Doing it.")
+							debugPrint("simpleFactorisation possible. Doing it.")
 							-- Well, it's all good ! Let's factor all that.
 							-- in infix : [(][coeff1][globalOP][Coeff2][)][insideOP][Variable1]
 							-- in RPN : [coeff1][coeff2][globalOP][var][insideOP1]
@@ -286,7 +287,6 @@ function simpleFactor(rpn)
 							rpn[i+4] = insideOP1
 							table.remove(rpn,i+5)
 							table.remove(rpn,i+5)
-							print("done : " .. tblinfo(rpn))	
 						end
 					end
 				end
@@ -310,6 +310,7 @@ function strType(str)
 	if isNumeric(str) then return "numeric" end
 	if string.find("*-+/^",str) then return "operator" end
 	if string.find(" ",str) then return "blank" end
+	return "variable" -- meh
 	-- if string.find("sin",str) then return "function" end    --> do all other cases
 end
 
