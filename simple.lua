@@ -202,45 +202,49 @@ function sortit(rpn)
 end
 
 function simpleFactor(rpn)
+				
+
 	local i=1
 	local oldrpn = copyTable(rpn)
-	while i<#rpn do
+	
+	while i<#rpn-5 do -- minimum required to perform any factorization ([coeff1][insideOP1][var][globalOP][coeff2][insideOP2][var])
+					-- which is in RPN : [coeff1][var][insideOP1][coeff2][var][insideOP2][globalOP]
 		-- let's find in the RPN stack the place where there are two operators in a row.
 		-- The one at the end will be the global op and the one before will be the inside one.
-		if i>5 then -- minimum required to perform any factorization ([coeff1][insideOP1][var][globalOP][coeff2][insideOP2][var])
-					-- which is in RPN : [coeff1][var][insideOP1][coeff2][var][insideOP2][globalOP]
-			insideOP2 = rpn[i]
-			insideOP1 = rpn[i-3]
-			globalOP = rpn[i+1]
-			coeff1 = rpn[i-5]
-			coeff2 = rpn[i-2]
-			var1 = rpn[i-4]
-			var2 = rpn[i-4]
+			insideOP2 = rpn[i+5]
+			insideOP1 = rpn[i+2]
+			globalOP = rpn[i+6]
+			coeff1 = rpn[i]
+			coeff2 = rpn[i+3]
+			var1 = rpn[i+1]
+			var2 = rpn[i+4]
 			
-			--print("hello world factor ?",coeff1,insideOP1,var1,globalOP,coeff2,insideOP2,var2)
-
+			print("hello world factor ?",coeff1 .. " " .. insideOP1.. " " .. var1.. " " .. globalOP.. " " .. coeff2.. " " .. insideOP2.. " " .. var2)
+			print("hello world    ? rpn",tblinfo(rpn))
 			if strType(insideOP2) == "operator" and strType(globalOP) == "operator" then
 				if insideOP1 == insideOP2 then
+				-- if (insideOP1 == "+" or insideOP1 == "-") and (insideOP2 == "+" or insideOP2 == "-") then
+
 					-- Get coefficients for the each inner part
 					-- Check for good (expected) types.  TO IMPROVE ! 2*x == x*2. Please re-order everything before !!!
 					if strType(coeff1) == "numeric" and strType(coeff2) == "numeric" then -- todo : support variable coeffs.
 						-- Get the variables for each coeff. Then check if it's the same variables we're dealing with.
 						if var1 == var2 then
-							debugPrint("simpleFactorisation possible. Doing it.")
+							print("simpleFactorisation possible. Doing it.")
 							-- Well, it's all good ! Let's factor all that.
 							-- in infix : [(][coeff1][globalOP][Coeff2][)][insideOP][Variable1]
 							-- in RPN : [coeff1][coeff2][globalOP][var][insideOP1]
-							rpn[i-4] = coeff2
-							rpn[i-3] = globalOP
-							rpn[i-2] = var1
-							rpn[i-1] = insideOP1
-							table.remove(rpn,i)
-							table.remove(rpn,i)
+							rpn[i+1] = coeff2
+							rpn[i+2] = globalOP
+							rpn[i+3] = var1
+							rpn[i+4] = insideOP1
+							table.remove(rpn,i+5)
+							table.remove(rpn,i+5)
+							print("done : " .. tblinfo(rpn))	
 						end
 					end
 				end
 			end
-		end
 		i=i+1
 	end
 	if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
