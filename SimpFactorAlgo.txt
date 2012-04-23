@@ -1,0 +1,29 @@
+Simplification / Factor algorithm
+Adriweb 2012
+
+
+Let's consider the input : 
+
+    3*x+x
+
+1) Transform all occurrences of "-x" and "+x" by : "-1*x" or "+1*x"
+
+2) RPN all that. We have : 3,x,*,1,x,*,+
+
+3) Make groups (like trees actually).
+
+4) 	Get the Global (outer) operator. here : "+"	
+	Get the inside operator(s). Here, "*" and "*"
+	Get the coefficients for the inner parts. Here, Coeff1 = "3" and Coeff2 =  "1"
+	Get the variable for the coeff (if same variable for each coeff)
+
+5)	Check if the inside operators are the same. Here "*". They are the same.
+
+6)	If so -> Apply that Formula :    [ ( ] [Coeff1] [GlobalOperator] [Coeff2] [ ) ] [InsideOp] [Variable]
+		Here that would be :       ( 3 + 1 ) * x
+
+7)	Recombine everything
+
+8)	Simplify what we can by calculating numerical stuff.
+
+9)	Enjoy

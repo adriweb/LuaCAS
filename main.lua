@@ -27,7 +27,7 @@ while true do
 		debugPrint("   RPN expr is : " .. tblinfo(toRPN(input)))
 		
 		local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input))):sub(3)
-		if colorize(improvedRPN) ~= input then	prettyDisplay(improvedRPN)	end
+		if colorize(improvedRPN) ~= colorize(input) then prettyDisplay(improvedRPN) end
 			
 		local simprpn = tblinfo(simplify(toRPN(input)))
 		
