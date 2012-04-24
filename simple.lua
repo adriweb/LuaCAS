@@ -239,7 +239,7 @@ function simpleFactor(rpn)
 	local oldrpn = copyTable(rpn)
 	
 	while i<#rpn-5 do -- minimum required to perform any factorization ([coeff1][insideOP1][var][globalOP][coeff2][insideOP2][var])
-					-- which is in RPN : [coeff1][var][insideOP1][coeff2][var][insideOP2][globalOP]
+					  -- which is in RPN : [coeff1][var][insideOP1][coeff2][var][insideOP2][globalOP]
 		-- let's find in the RPN stack the place where there are two operators in a row.
 		-- The one at the end will be the global op and the one before will be the inside one.
 			insideOP2 = rpn[i+5]
@@ -249,18 +249,16 @@ function simpleFactor(rpn)
 			coeff2 = rpn[i+3]
 			var1 = rpn[i+1]
 			var2 = rpn[i+4]
-			
-			--print("hello world factor ?",coeff1 .. " " .. insideOP1.. " " .. var1.. " " .. globalOP.. " " .. coeff2.. " " .. insideOP2.. " " .. var2)
-			--print("hello world    ? rpn",tblinfo(rpn))
 			if strType(insideOP2) == "operator" and strType(globalOP) == "operator" then
 				if insideOP1 == insideOP2 then
-
 					-- Get coefficients for the each inner part
 					-- Check for good (expected) types.
 					if (strType(coeff1) == "numeric" or strType(coeff1) == "variable") and (strType(coeff2) == "numeric" or strType(coeff2) == "variable") then -- todo : support variable coeffs.
 						-- Get the variables for each coeff. Then check if it's the same variables we're dealing with.
 						if var1 == var2 then
-							debugPrint("simpleFactorisation possible. Doing it.")
+							debugPrint("   simpleFactorisation possible. Doing it.")
+							debugPrint("   Possible to factor : " .. coeff1 .. " " .. insideOP1.. " " .. var1.. " " .. globalOP.. " " .. coeff2.. " " .. insideOP2.. " " .. var2)
+							debugPrint("   Which is in RPN : " .. tblinfo(rpn))
 							-- Well, it's all good ! Let's factor all that.
 							-- in infix : [(][coeff1][globalOP][Coeff2][)][insideOP][Variable1]
 							-- in RPN : [coeff1][coeff2][globalOP][var][insideOP1]
@@ -270,6 +268,7 @@ function simpleFactor(rpn)
 							rpn[i+4] = insideOP1
 							table.remove(rpn,i+5)
 							table.remove(rpn,i+5)
+							stepsPrettyDisplay(convertRPN2Infix(tblinfo(rpn)))
 						end
 					end
 				end

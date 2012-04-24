@@ -15,6 +15,8 @@ dofile 'rpn2infix.lua'
 dofile 'commands.lua'
 
 showDebug = false
+showSteps = false
+
 input = ""
 while input ~= "exit" do
 	io.write("luaCAS> ")
@@ -23,27 +25,32 @@ while input ~= "exit" do
    	if input:len()>0 then
 		
 		symbolify(input)
-		checkCommand(input)
+		if not checkCommand(input) then
 				
-		debugPrint("   RPN expr is : " .. tblinfo(toRPN(input)))
-		
-		local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input))):sub(3)
-		if colorize(improvedRPN) ~= colorize(input) then prettyDisplay(improvedRPN) end
+			debugPrint("   RPN expr is : " .. tblinfo(toRPN(input)))
 			
-		local simprpn = tblinfo(simplify(toRPN(input)))
-		
-		debugPrint("   RPN expr of simplified is : " .. colorize(simprpn))
-		debugPrint("   Calculated RPN is " .. colorize(calculateRPN(simprpn)))
-		
-		if calculateRPN(simprpn) == "var error" then
-			debugPrint("got variable error in calculateRPN!")
-			finalRes = convertRPN2Infix(simprpn)
+			local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input))):sub(3)
+			if colorize(improvedRPN) ~= colorize(input) then prettyDisplay(improvedRPN) end
+				
+			local simprpn = tblinfo(simplify(toRPN(input)))
+			
+			debugPrint("   RPN expr of simplified is : " .. colorize(simprpn))
+			debugPrint("   Calculated RPN is " .. colorize(calculateRPN(simprpn)))
+			
+			if calculateRPN(simprpn) == "var error" then
+				debugPrint("   got variable error in calculateRPN!")
+				finalRes = convertRPN2Infix(simprpn)
+			else
+				finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))))
+			end
+			debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
+			
+			if improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input) then prettyDisplay(finalRes) end
+			
 		else
-			finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))))
+			prettyDisplay(cmdResult)
+			cmdResult = ""
 		end
-		debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
-		
-		if improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input) then prettyDisplay(finalRes) end
 				
 		io.write("\n")
 		io.flush()

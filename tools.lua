@@ -146,3 +146,7 @@ end
 function prettyDisplay(str)
 	print("     =  " .. colorize(str))
 end
+
+function stepsPrettyDisplay(str)
+	if showSteps or showDebug then prettyDisplay(str) end
+end
