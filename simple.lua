@@ -41,7 +41,9 @@ end
 
 function simplify(rpn)
 	replaceNegative(rpn)
-	--create1x(rpn)
+
+	--create1x(rpn)	
+	replaceP(rpn)
 	sortit(rpn)
 	sortit2(rpn)
 	simpleFactor(rpn)
@@ -66,6 +68,24 @@ function create1x(rpn, start)
 			table.insert(rpn, i, "1")
 			create1x(rpn, i+2)
 			break
+		end
+	end
+	
+	return rpn
+end
+
+function replaceP(rpn)
+	local len	= #rpn
+	local a,b,o1,o2
+	for i=1, len-4 do
+		a	= rpn[i]
+		b	= rpn[i+1]
+		o1	= rpn[i+2]
+		o2	= rpn[i+3]
+		
+		if not operator[a] and not operator[b] and operator[o1] and operator[o2] and o1 == o2 then
+			rpn[i+1]	= o1
+			rpn[i+2]	= b
 		end
 	end
 	
@@ -121,7 +141,7 @@ function creategroup(datatable, operator, startgroup)
 		table.insert(group, tostring(value))	-- tostring to be sure all data is in strings when we put it back in the RPN table
 		table.insert(group, operator)
 	end
-	
+
 	return group
 end
 
