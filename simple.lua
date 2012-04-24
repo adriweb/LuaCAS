@@ -2,7 +2,7 @@
 ----           LuaCAS             ----
 ----            v0.1              ----
 ----                              ----
-----  Adrien 'Adriweb' Bertrand   ----
+----  Adrien 'TheGame' Bertrand   ----
 ----            2012              ----
 ----                              ----
 ----         GPL License          ----
