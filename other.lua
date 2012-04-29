@@ -1,6 +1,6 @@
 --------------------------------------
 ----           LuaCAS             ----
-----            v0.1              ----
+----            v0.2              ----
 ----                              ----
 ----  Adrien 'Adriweb' Bertrand   ----
 ----            2012              ----
@@ -9,11 +9,12 @@
 --------------------------------------
  
 function getAbout()
-	return [[LuaCAS v0.1b
-       ----------------------------
-       (C) Adrien Bertrand	
-       Made in 2012.
-       Thanks to Jim Bauwens
+	return [[╔----------------------------╗
+║ LuaCAS v0.2b · GPL License ║
+╠----------------------------╢
+║  (C) 2012 Adrien Bertrand  ║
+║ Many Thanks to Jim Bauwens ║
+╚----------------------------╝
 	]]
 end
 

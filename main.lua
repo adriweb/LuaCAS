@@ -1,6 +1,6 @@
 --------------------------------------
 ----           LuaCAS             ----
-----            v0.1              ----
+----            v0.2              ----
 ----                              ----
 ----  Adrien 'Adriweb' Bertrand   ----
 ----            2012              ----
@@ -35,32 +35,41 @@ function main()
 				chgFlag = 1
 			end
 			
+			_, finalRes = pcall(loadstring("return " .. input) or function() end)
+			-- finalRes will contain the result if possible.
+						
 			symbolify(input)
 			if not checkCommand(input) then
-							
-				debugPrint("   RPN expr is : " .. tblinfo(toRPN(input)))
-				
-				local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input))):sub(3)
-				if colorize(improvedRPN) ~= colorize(input) and chgFlag == 0 then prettyDisplay(improvedRPN) end
+				if type(finalRes) ~= "number" then
+					debugPrint("   Direct Calculation (via lua math engine) not possible.")
+					debugPrint("   RPN expr is : " .. tblinfo(toRPN(input)))
 					
-				local simprpn = tblinfo(simplify(toRPN(input)))
-				
-				debugPrint("   RPN expr of simplified is : " .. colorize(simprpn))
-				debugPrint("   Calculated RPN is " .. colorize(calculateRPN(simprpn)))
-				
-				if calculateRPN(simprpn) == "var error" then
-					debugPrint("   got variable error in calculateRPN!")
-					finalRes = convertRPN2Infix(simprpn,true) -- true is for isFinal
+					local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input))):sub(3)
+					if colorize(improvedRPN) ~= colorize(input) and chgFlag == 0 then prettyDisplay(improvedRPN) end
+						
+					local simprpn = tblinfo(simplify(toRPN(input)))
+					
+					debugPrint("   RPN expr of simplified is : " .. colorize(simprpn))
+					debugPrint("   Calculated RPN is " .. colorize(calculateRPN(simprpn)))
+					
+					if calculateRPN(simprpn) == "var error" then
+						debugPrint("   got variable error in calculateRPN!")
+						finalRes = convertRPN2Infix(simprpn,true) -- true is for isFinal
+					else
+						finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))),true) -- true is for isFinal
+					end
+					debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
+					
+					rawResult = finalRes
+					
+					if improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input) then prettyDisplay(finalRes) end
 				else
-					finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))),true) -- true is for isFinal
+					debugPrint("   Direct Calculation via lua math engine.")
+					rawResult = finalRes
+					prettyDisplay(finalRes)
 				end
-				debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
-				
-				rawResult = finalRes
-				
-				if improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input) then prettyDisplay(finalRes) end
-	
 			end
+			
 					
 			io.write("\n")
 			io.flush()
@@ -69,8 +78,7 @@ function main()
 			return 0
 		end
 	return 1
-end
-
+	end
 end
 
 function launch()
@@ -80,5 +88,7 @@ function launch()
 		launch()
 	end
 end
+
+print(getAbout())
 
 launch()
