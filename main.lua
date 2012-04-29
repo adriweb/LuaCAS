@@ -54,7 +54,7 @@ function main()
 					
 					if calculateRPN(simprpn) == "var error" then
 						debugPrint("   got variable error in calculateRPN!")
-						finalRes = convertRPN2Infix(simprpn,true) -- true is for isFinal
+						finalRes = convertRPN2Infix(simprpn)
 					else
 						finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))),true) -- true is for isFinal
 					end

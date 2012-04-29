@@ -78,38 +78,38 @@ function needParensOnLeft(node)
     return (node.left.kind == "operator") and (node.left.precedence < node.precedence)
 end
     
-function needParensOnRight(node, isFinal)
+function needParensOnRight(node)
     if (node.right.kind == "number" or node.right.kind == "variable") then
         return false
     end
-    if (node.operator == "+") or (node.operator == "*") then
-        return isFinal and false or true -- isFinal and (node.right.precedence < node.precedence) or true -- dafuq is that. FIX
+    if (node.operator == "+" or node.operator == "*") then
+        return node.right.precedence < node.precedence
     end
-    return isFinal and false or true --isFinal and (node.right.precedence <= node.precedence) or true -- dafuq is that. FIX
+    return node.right.precedence <= node.precedence
 end
     
-function visit(node, isFinal)
+function visit(node)
     if node.kind=="number" or node.kind=="variable" then
         return node.value
     end
         
-    local lhs = visit(node.left, isFinal)
+    local lhs = visit(node.left)
     if needParensOnLeft(node) then
         lhs = '(' .. lhs .. ')'
     end
         
-    local rhs = visit(node.right, isFinal)
-    if needParensOnRight(node,isFinal) then
+    local rhs = visit(node.right)
+    if needParensOnRight(node) then
         rhs = '(' .. rhs .. ')'
     end
         
     return lhs .. node.operator .. rhs
 end
   
-function convertRPN2Infix(rpnExpr,isFinal) -- input and output are strings
+function convertRPN2Infix(rpnExpr) -- input and output are strings
 	if strType(rpnExpr) == "numeric" then return rpnExpr end
     local tree = convertRPN2Tree(rpnExpr)
     if showTree and showDebug then dump("tree",tree) end
-    local infixExpr = tree and visit(tree,isFinal) or "error"
+    local infixExpr = tree and visit(tree) or "error"
     return infixExpr
 end

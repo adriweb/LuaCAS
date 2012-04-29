@@ -121,8 +121,7 @@ function sortit2(rpn, offs)
 				break
 			end
 		end
-
-
+		
 		local done, off = simpgroup(rpn, pos-j, pos + 2 + j, op)
 		sortit2(rpn, off)
 		return rpn
@@ -153,13 +152,12 @@ function simpgroup(rpn, posa, posb, o, startgroup)
 	local datatable	= {}
 	
 	-- We might need to find another solution.
-	local oldrpn	= copyTable(rpn)
-	
+	local oldrpn = copyTable(rpn)
 	
 	-- We need to handle these stuff different. This is for later, as currently they can give faulty results
 	-- We should change add negative sign's to numbers and create a special rational number type
 	if o == "/"  or o =="-" or o =="^" then
-		return
+		return false, posb+1 -- needs fixing :D #TODO
 	end
 	
 	-- Remove the ENTIRE (and possible the last operator of the previous RPN group) and put the datavalues in a separate table
@@ -271,7 +269,7 @@ function simpleFactor(rpn)
 			var1 = rpn[i+1]
 			var2 = rpn[i+4]
 			if strType(insideOP2) == "operator" and strType(globalOP) == "operator" then
-				if insideOP1 == insideOP2 then
+				if (insideOP1 == insideOP2) and insideOP1 ~= "^" then
 					-- Get coefficients for the each inner part
 					-- Check for good (expected) types.
 					if strType(coeff1) and strType(coeff2) then
