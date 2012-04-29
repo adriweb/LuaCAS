@@ -13,6 +13,7 @@ dofile 'rpn.lua'
 dofile 'simple.lua'
 dofile 'rpn2infix.lua'
 dofile 'commands.lua'
+dofile 'polyClass.lua'
 
 showDebug = false
 showSteps = false
@@ -46,10 +47,7 @@ while input ~= "exit" do
 			debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
 			
 			if improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input) then prettyDisplay(finalRes) end
-			
-		else
-			prettyDisplay(cmdResult)
-			cmdResult = ""
+
 		end
 				
 		io.write("\n")

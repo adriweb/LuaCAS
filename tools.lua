@@ -7,11 +7,55 @@
 ----                              ----
 ----         GPL License          ----
 --------------------------------------
+-- some parts are from everywhere :D
  
 local colors = require 'ansicolors'
 
 function debugPrint(...)
 	if showDebug then print(...) end
+end
+
+class = function(prototype)
+local derived={}
+
+ 	if prototype then
+		derived.__proto	= prototype
+ 		function derived.__index(t,key)
+ 			return rawget(derived,key) or prototype[key]
+ 		end
+ 	else
+ 		function derived.__index(t,key)
+ 			return rawget(derived,key)
+ 		end
+ 	end
+ 	
+ 	function derived.__call(proto,...)
+ 		local instance={}
+ 		setmetatable(instance,proto)
+ 		instance.__obj	= true
+ 		local init=instance.init
+ 		if init then
+ 			init(instance,...)
+ 		end
+ 		return instance
+ 	end
+ 	
+ 	setmetatable(derived,derived)
+ 	return derived
+end
+
+
+function string.uchar(c)
+	c = c<256 and c or 100
+	return string.char(c)
+end
+
+function string:ubyte(...)
+	return string.byte(self, ...)
+end
+
+function string:usub(...)
+	return string.sub(self, ...)
 end
 
 function string:split(pattern)

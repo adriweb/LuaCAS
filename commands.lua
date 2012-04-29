@@ -7,29 +7,49 @@
 ----                              ----
 ----         GPL License          ----
 --------------------------------------
+
+dofile 'other.lua'
  
 cmdResult = "No Command"
  
 local commands = {
-	["diff"] = function() cmdResult = "diff called" end,
-	["limit"] = function() cmdResult = "limit called" end,
-	["sum"] = function() cmdResult = "sum called" end,
-	["product"] = function() cmdResult = "product called" end,
-	["integral"] = function() cmdResult = "integral called" end,
-	["debugON"] = function() showDebug = true cmdResult = "---Debug output enabled---" end,
-	["debugOFF"] = function() showDebug = false cmdResult = "---Debug output disabled---" end,
-	["stepsON"] = function() showSteps = true cmdResult = "---Steps output enabled---" end,
-	["stepsOFF"] = function() showSteps = false cmdResult = "---Steps output disabled---" end
+	["diff"] = function(argsTable) cmdResult = "diff called" end,
+	["limit"] = function(argsTable) cmdResult = "limit called" end,
+	["sum"] = function(argsTable) cmdResult = "sum called" end,
+	["product"] = function(argsTable) cmdResult = "product called" end,
+	["integral"] = function(argsTable) cmdResult = "integral called" end,
+	["showAbout"] = function(argsTable) cmdResult = getAbout() end,
+	["showStatus"] = function(argsTable) cmdResult = getStatus() end,
+	["help"] = function(argsTable) cmdResult = getHelp() end,
+	["debugON"] = function(argsTable) showDebug = true cmdResult = "---Debug output enabled---" end,
+	["debugOFF"] = function(argsTable) showDebug = false cmdResult = "---Debug output disabled---" end,
+	["stepsON"] = function(argsTable) showSteps = true cmdResult = "---Steps output enabled---" end,
+	["stepsOFF"] = function(argsTable) showSteps = false cmdResult = "---Steps output disabled---" end
 }
 
 function checkCommand(input)
 	local cmd
 	for k,v in pairs(commands) do
 		cmd = string.match(input,k)
-		if cmd then doCommand(cmd) return true end
+		if cmd then local _, tmp = string.find(input, cmd) ; doCommand(cmd,input:sub(2+tmp)) return true end
 	end
 end
 
-function doCommand(cmd)
-	commands[cmd]()
+function doCommand(cmd, input)
+	commands[cmd](input:split())
+	if cmdResult ~= "No Command" then endCommand(cmdResult) end
+	checkCommand(input)
+end
+
+function endCommand(cmdResult)
+	prettyDisplay(cmdResult)
+	cmdResult = ""
+end
+
+function getHelp()
+	local theString = "List of available commands (besides basic math input) : "
+	for cmd,_ in pairs(commands) do
+		theString = theString .. c_multiSpace .. tostring(cmd)
+	end
+	return theString
 end
