@@ -16,6 +16,7 @@ dofile 'commands.lua'
 dofile 'polyClass.lua'
 
 showDebug = false
+showTree = false
 showSteps = false
 
 input = ""

@@ -109,7 +109,7 @@ end
 function convertRPN2Infix(rpnExpr,isFinal) -- input and output are strings
 	if strType(rpnExpr) == "numeric" then return rpnExpr end
     local tree = convertRPN2Tree(rpnExpr)
-    --dump("tree",tree)
+    if showTree and showDebug then dump("tree",tree) end
     local infixExpr = tree and visit(tree,isFinal) or "error"
     return infixExpr
 end

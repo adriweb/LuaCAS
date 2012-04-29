@@ -23,6 +23,8 @@ local commands = {
 	["help"] = function(argsTable) cmdResult = getHelp() end,
 	["debugON"] = function(argsTable) showDebug = true cmdResult = "---Debug output enabled---" end,
 	["debugOFF"] = function(argsTable) showDebug = false cmdResult = "---Debug output disabled---" end,
+	["treeON"] = function(argsTable) showTree = true cmdResult = "---Tree output enabled---" end,
+	["treeOFF"] = function(argsTable) showTree = false cmdResult = "---Tree output disabled---" end,
 	["stepsON"] = function(argsTable) showSteps = true cmdResult = "---Steps output enabled---" end,
 	["stepsOFF"] = function(argsTable) showSteps = false cmdResult = "---Steps output disabled---" end
 }

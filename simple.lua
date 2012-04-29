@@ -274,7 +274,7 @@ function simpleFactor(rpn)
 				if insideOP1 == insideOP2 then
 					-- Get coefficients for the each inner part
 					-- Check for good (expected) types.
-					if (strType(coeff1) == "numeric" or strType(coeff1) == "variable") and (strType(coeff2) == "numeric" or strType(coeff2) == "variable") then -- todo : support variable coeffs.
+					if strType(coeff1) and strType(coeff2) then
 						-- Get the variables for each coeff. Then check if it's the same variables we're dealing with.
 						if var1 == var2 then
 							debugPrint("   simpleFactorisation possible. Doing it.")
