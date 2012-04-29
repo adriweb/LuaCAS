@@ -44,6 +44,7 @@ function simplify(rpn)
 
 	--create1x(rpn)	
 	replaceP(rpn)
+	simpleFactor(rpn)
 	sortit(rpn)
 	sortit2(rpn)
 	simpleFactor(rpn)
