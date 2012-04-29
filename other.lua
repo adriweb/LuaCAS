@@ -21,5 +21,5 @@ c_multiSpace = [[
  ]]
  
 function getStatus()
-	return "showSteps : " .. tostring(showSteps) .. c_multiSpace .. "showDebug : " .. tostring(showDebug)
+	return colorize("showSteps : " .. tostring(showSteps) .. c_multiSpace .. "       showDebug : " .. tostring(showDebug))
 end

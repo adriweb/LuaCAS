@@ -9,7 +9,7 @@
 --------------------------------------
 -- some parts are from everywhere :D
  
-local colors = require 'ansicolors'
+colors = require 'ansicolors'
 
 function debugPrint(...)
 	if showDebug then print(...) end
@@ -155,6 +155,8 @@ function colorize(str)
    	str = str:gsub("%*",colors.cyan .. "%*" .. colors.reset)
    	str = str:gsub("%/",colors.cyan .. "%/" .. colors.reset)
    	str = str:gsub("%^",colors.cyan .. "%^" .. colors.reset)
+   	str = str:gsub("false",colors.red .. "false" .. colors.reset)
+   	str = str:gsub("true",colors.green .. "true" .. colors.reset)
    	-- do for variables (but that will change the way we analyze :  check for previous and next char to see if also char (then its a function, or, if not (check if func) then it's a multi-char variable ..)
    	
 	return str

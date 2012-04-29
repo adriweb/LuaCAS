@@ -19,6 +19,8 @@ showDebug = false
 showSteps = false
 
 input = ""
+
+function main()
 while input ~= "exit" do
 	io.write("luaCAS> ")
 	io.flush()
@@ -40,9 +42,9 @@ while input ~= "exit" do
 			
 			if calculateRPN(simprpn) == "var error" then
 				debugPrint("   got variable error in calculateRPN!")
-				finalRes = convertRPN2Infix(simprpn)
+				finalRes = convertRPN2Infix(simprpn,true) -- true is for isFinal
 			else
-				finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))))
+				finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))),true) -- true is for isFinal
 			end
 			debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
 			
@@ -52,7 +54,19 @@ while input ~= "exit" do
 				
 		io.write("\n")
 		io.flush()
-		
+		return 0
+	end
+return 1
+end
+
+end
+
+function launch()
+	retOK, theErr = pcall(main)
+	if theErr and retOK ~= 1 then 
+		if string.len(theErr)>5 then print("", colors.onred .. "Error ! " .. colors.reset .. " " .. theErr) print("") end
+		launch()
 	end
 end
 
+launch()
