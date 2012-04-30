@@ -50,6 +50,7 @@ function main()
 						debugPrint("   got variable error in calculateRPN!")
 						finalRes = convertRPN2Infix(simprpn)
 					else
+						print("this should never appear ? (main:53)")
 						finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))))
 					end
 					debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
@@ -57,6 +58,8 @@ function main()
 					rawResult = finalRes
 					
 					if colorize(factResult) ~= colorize(finalRes) and (improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input)) then
+						prettyDisplay(finalRes)
+					elseif not showSteps then
 						prettyDisplay(finalRes)
 					else
 						debugPrint('   "Steps" result already was the final result. Not re-printing') 
@@ -74,6 +77,7 @@ function main()
 			io.flush()
 			
 			chgFlag = 0
+			isSimplifying = 0
 			return 0
 		end
 	return 1

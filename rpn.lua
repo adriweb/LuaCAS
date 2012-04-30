@@ -26,7 +26,7 @@ func["exp"]	= math.exp
 argument_seperator	= ","
 
 function splitExpr(expr)
-	local oper	= {"%+", "%-", "%*", "%/", "%^", "%(", "%)", "%a+"}
+	local oper	= {"%+", "%-", "%*", "%/", "%^", "%(", "%)", "%w+"}
 	for _, o in ipairs(oper) do
 		expr	= expr:gsub(o, " %1 ")
 	end
@@ -133,20 +133,20 @@ end
 
 
 function calculateRPN(s)
-  tb = {}
-  z = 0
-  for tk in string.gfind(s,'%S+') do
-    if string.find(tk,'^[-+*/]$')  then
-      if 2>table.getn(tb) then z = nil break end
-      y,x = table.remove(tb),table.remove(tb)
-      loadstring('z=x'..tk..'y')()
+  tmpVarRPNCalctb = {}
+  tmpVarRPNCalcz = 0
+  for tmpVarRPNCalctk in string.gfind(s,'%S+') do
+    if string.find(tmpVarRPNCalctk,'^[-+*/]$')  then
+      if 2>table.getn(tmpVarRPNCalctb) then tmpVarRPNCalcz = nil break end
+      tmpVarRPNCalcy,tmpVarRPNCalcx = table.remove(tmpVarRPNCalctb),table.remove(tmpVarRPNCalctb)
+      loadstring('tmpVarRPNCalcz=tmpVarRPNCalcx'..tmpVarRPNCalctk..'tmpVarRPNCalcy')()
     else
-      z = tonumber(tk)  if z==nil then break end
+      tmpVarRPNCalcz = tonumber(tmpVarRPNCalctk)  if tmpVarRPNCalcz==nil then break end
     end
-    table.insert(tb,z)
+    table.insert(tmpVarRPNCalctb,tmpVarRPNCalcz)
   end
-  n = table.getn(tb)
-  if n==1 and z then return(z)
-  elseif n>1 or z==nil then return('var error') end
+  tmpVarRPNCalcn = table.getn(tmpVarRPNCalctb)
+  if tmpVarRPNCalcn==1 and tmpVarRPNCalcz then return(tmpVarRPNCalcz)
+  elseif tmpVarRPNCalcn>1 or tmpVarRPNCalcz==nil then return('var error') end
 end
 

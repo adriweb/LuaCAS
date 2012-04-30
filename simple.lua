@@ -39,15 +39,28 @@ function div(a,b)
 	end
 end	
 
-function simplify(rpn)
-	replaceNegative(rpn)
+isSimplifying = 0
 
-	--create1x(rpn)	
+function simplify(rpn)
+	isSimplifying = isSimplifying + 1
+
+	replaceNegative(rpn)
+	sortit(rpn)
+	sortit2(rpn)
+	create1x(rpn)
+	if needReSimplify then simplify(rpn) end
 	replaceP(rpn)
 	simpleFactor(rpn)
+	if needReSimplify then simplify(rpn) end
 	sortit(rpn)
 	sortit2(rpn)
 	simpleFactor(rpn)
+	if needReSimplify then simplify(rpn) end
+	deleteUseless(rpn)
+	if needReSimplify then simplify(rpn) end
+	simpleFactor(rpn)
+	if needReSimplify then simplify(rpn) end
+	deleteUseless(rpn)
 	if needReSimplify then simplify(rpn) end
 
 	return rpn
@@ -59,19 +72,51 @@ function infixSimplify(infix)
 end
 
 function create1x(rpn, start)
+	local oldrpn = copyTable(rpn)
 	local token
 	for i=(start or 1), #rpn do
-		token	= rpn[i]
-		if not tonumber(token) and not operator[token] then
-			table.remove(rpn, i)
-			table.insert(rpn, i, "*")
-			table.insert(rpn, i, token)
-			table.insert(rpn, i, "1")
+		token = rpn[i]
+		if strType(token) == "variable" then
+			if (i+1 > #rpn) or (rpn[i+1]~="*" and rpn[i+1]~="/") then
+				table.remove(rpn, i)
+				table.insert(rpn, i, "1")
+				table.insert(rpn, i+1, token)
+				table.insert(rpn, i+2, "*")
+			end
 			create1x(rpn, i+2)
 			break
 		end
 	end
+	if isSimplifying == 1 and convertRPN2Infix(tblinfo(rpn)) ~= input then stepsPrettyDisplay(convertRPN2Infix(tblinfo(rpn))) end
+	isSimplifying = isSimplifying + 1
+	if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
+	return rpn
+end
+
+function deleteUseless(rpn, start)
+	local oldrpn = copyTable(rpn)
+	local token
 	
+	for i=(start or 2), #rpn do
+		token = rpn[i]
+		if strType(token) == "variable" or strType(token) == "numeric" then
+			if rpn[i-1] == "1" and rpn[i+1] == "*" then
+				table.remove(rpn, i+1)
+				table.remove(rpn, i-1)
+			end
+			deleteUseless(rpn, i+1)
+			break
+		end
+		if strType(token) == "operator" then
+			if token == "/" and rpn[i-1] == "1" then
+				table.remove(rpn, i)
+				table.remove(rpn, i-1)
+			end
+			deleteUseless(rpn, i+1)
+			break
+		end
+	end
+	if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
 	return rpn
 end
 
