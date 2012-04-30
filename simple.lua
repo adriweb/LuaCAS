@@ -291,9 +291,9 @@ function sortit(rpn)
 	return rpn
 end
 
-function simpleFactor(rpn)
+function simpleFactor(rpn, start)
 
-	local i=1
+	local i=start or 1
 	local oldrpn = copyTable(rpn)
 	
 	while i<#rpn-5 do -- minimum required to perform any factorization ([coeff1][insideOP1][var][globalOP][coeff2][insideOP2][var])
@@ -333,6 +333,7 @@ function simpleFactor(rpn)
 				end
 			end
 		i=i+1
+		
 	end
 	if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
 	return rpn
