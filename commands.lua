@@ -13,11 +13,11 @@ dofile 'other.lua'
 cmdResult = "No Command"
  
 local commands = {
-	["diff"] = function(argsTable) cmdResult = "diff called" end,
-	["limit"] = function(argsTable) cmdResult = "limit called" end,
-	["sum"] = function(argsTable) cmdResult = "sum called" end,
-	["product"] = function(argsTable) cmdResult = "product called" end,
-	["integral"] = function(argsTable) cmdResult = "integral called" end,
+	["diff"] = function(argsTable) cmdResult = "diff called on " .. tblinfo(argsTable) end,
+	["limit"] = function(argsTable) cmdResult = "limit called on " .. tblinfo(argsTable) end,
+	["sum"] = function(argsTable) cmdResult = "sum called on " .. tblinfo(argsTable) end,
+	["product"] = function(argsTable) cmdResult = "product called on " .. tblinfo(argsTable) end,
+	["integral"] = function(argsTable) cmdResult = "integral called on " .. tblinfo(argsTable) end,
 	["showAbout"] = function(argsTable) cmdResult = getAbout() end,
 	["showStatus"] = function(argsTable) cmdResult = getStatus() end,
 	["help"] = function(argsTable) cmdResult = getHelp() end,

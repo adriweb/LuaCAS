@@ -8,6 +8,7 @@
 ----         GPL License          ----
 --------------------------------------
 
+dofile 'other.lua'
 dofile 'tools.lua'
 dofile 'rpn.lua'
 dofile 'simple.lua'
@@ -15,13 +16,6 @@ dofile 'rpn2infix.lua'
 dofile 'commands.lua'
 dofile 'polyClass.lua'
 
-showDebug = false
-showTree = false
-showSteps = false
-
-input = ""
-rawResult = "NoResult"
-chgFlag = 0
 
 function main()
 	while input ~= "exit" do
@@ -56,13 +50,18 @@ function main()
 						debugPrint("   got variable error in calculateRPN!")
 						finalRes = convertRPN2Infix(simprpn)
 					else
-						finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))),true) -- true is for isFinal
+						finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))))
 					end
 					debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
 					
 					rawResult = finalRes
 					
-					if improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input) then prettyDisplay(finalRes) end
+					if colorize(factResult) ~= colorize(finalRes) and (improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input)) then
+						prettyDisplay(finalRes)
+					else
+						debugPrint('   "Steps" result already was the final result. Not re-printing') 
+					end
+					
 				else
 					debugPrint("   Direct Calculation via lua math engine.")
 					rawResult = finalRes

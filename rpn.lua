@@ -41,16 +41,6 @@ function toRPN(expr)
 	
 	local expr	= splitExpr(expr)
 	
-	--[[
-	tblinfo(expr)
-	
-	
-	do 
-		return
-	end
-	
-	--]]
-	
 	if #expr == 0 then
 		error("Invalid expression!")
 	end
@@ -106,6 +96,7 @@ function toRPN(expr)
 			table.insert(rpn_stack, "(")
 		
 		elseif token	== ")" then
+		
 			local stack_token	= ""
 			
 			while true do

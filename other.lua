@@ -24,3 +24,13 @@ c_multiSpace = [[
 function getStatus()
 	return colorize("showSteps : " .. tostring(showSteps) .. c_multiSpace .. "       showDebug : " .. tostring(showDebug) .. c_multiSpace .. "       showTree : " .. tostring(showTree))
 end
+
+
+showDebug = false
+showTree = false
+showSteps = false
+
+input = ""
+rawResult = "NoResult"
+factResult = "NoFactResult"
+chgFlag = 0

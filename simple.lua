@@ -240,7 +240,7 @@ function sortit(rpn)
 			local posb	= findgroup(rpn, i, o)
 			
 			-- Simplify (if it can) the group.
-			local done	= simpgroup(rpn, i, posb, o, operator[a] and a)
+			local done = simpgroup(rpn, i, posb, o, operator[a] and a)
 			-- If there are changes, try to simplify it again. This is currently recursive, should change to non-recursive.
 			if done then
 				sortit(rpn)
@@ -287,6 +287,7 @@ function simpleFactor(rpn)
 							rpn[i+4] = insideOP1
 							table.remove(rpn,i+5)
 							table.remove(rpn,i+5)
+							factResult = convertRPN2Infix(tblinfo(rpn))
 							stepsPrettyDisplay(convertRPN2Infix(tblinfo(rpn)))
 						end
 					end
