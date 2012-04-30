@@ -72,9 +72,6 @@ function toRPN(expr)
 				error("Attempt to use function as variable!")
 			else
 				table.insert(rpn_stack, token)
-				table.insert(rpn_stack, "(")
-				-- skip the next token (a left parenthesis) since it is part of the function token
-				pos	= pos + 1 
 			end
 			
 		-- If the token is a function argument separator
