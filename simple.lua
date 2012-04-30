@@ -43,7 +43,6 @@ isSimplifying = 0
 
 function simplify(rpn)
 	isSimplifying = isSimplifying + 1
-
 	replaceNegative(rpn)
 	sortit(rpn)
 	sortit2(rpn)
@@ -57,12 +56,8 @@ function simplify(rpn)
 	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
 	deleteUseless(rpn)
-	if needReSimplify then simplify(rpn) end
 	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
-	deleteUseless(rpn)
-	if needReSimplify then simplify(rpn) end
-
 	return rpn
 end
 
@@ -77,7 +72,7 @@ function create1x(rpn, start)
 	for i=(start or 1), #rpn do
 		token = rpn[i]
 		if strType(token) == "variable" then
-			if (i+1 > #rpn) or (rpn[i+1]~="*" and rpn[i+1]~="/") then
+			if (not((strType(rpn[i+1]) == "numeric" or strType(rpn[i+1]) == "variable") and (rpn[i+2] == "*" or rpn[i+2] == "/"))) and ((i+1 > #rpn) or (rpn[i+1]~="*" and rpn[i+1]~="/")) then
 				table.remove(rpn, i)
 				table.insert(rpn, i, "1")
 				table.insert(rpn, i+1, token)
@@ -116,7 +111,6 @@ function deleteUseless(rpn, start)
 			break
 		end
 	end
-	if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
 	return rpn
 end
 
