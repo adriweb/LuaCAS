@@ -44,6 +44,7 @@ isSimplifying = 0
 function simplify(rpn)
 	isSimplifying = isSimplifying + 1
 	replaceNegative(rpn)
+	simpleFactor(rpn)
 	sortit(rpn)
 	sortit2(rpn)
 	create1x(rpn)
@@ -51,6 +52,7 @@ function simplify(rpn)
 	replaceP(rpn)
 	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
+	simpleFactor(rpn)
 	sortit(rpn)
 	sortit2(rpn)
 	simpleFactor(rpn)
@@ -296,6 +298,8 @@ function simpleFactor(rpn, start)
 	local i=start or 1
 	local oldrpn = copyTable(rpn)
 	
+	-- TODO  :   algo simplification pour fractions avec haut == bas  ( -> 1)
+	
 	while i<#rpn-5 do -- minimum required to perform any factorization ([coeff1][insideOP1][var][globalOP][coeff2][insideOP2][var])
 					  -- which is in RPN : [coeff1][var][insideOP1][coeff2][var][insideOP2][globalOP]
 		-- let's find in the RPN stack the place where there are two operators in a row.
@@ -308,7 +312,7 @@ function simpleFactor(rpn, start)
 			var1 = rpn[i+1]
 			var2 = rpn[i+4]
 			if strType(insideOP2) == "operator" and strType(globalOP) == "operator" then
-				if (insideOP1 == insideOP2) and insideOP1 ~= "^" then
+				if (insideOP1 == insideOP2) and insideOP1 ~= "^" and globalOP ~= "/" and globalOP ~= "^" then
 					-- Get coefficients for the each inner part
 					-- Check for good (expected) types.
 					if strType(coeff1) and strType(coeff2) then
