@@ -157,7 +157,16 @@ function afficheTable(tbl)
 	end
 end
 
-function resort(table)
+function resort(tbl)
+	local newTable = {}
+	for _, value in pairs(tbl) do
+			table.insert(newTable, value)
+		end
+	end
+	return newTable
+end
+
+function badresort(table)
 	local indexes = {}
 	for k,_ in pairs(table) do
 	    indexes[#indexes+1] = k
