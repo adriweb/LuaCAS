@@ -57,7 +57,7 @@ function simplify(rpn)
 	sortit2(rpn)
 	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
-	--deleteUseless(rpn)   -- pour test groupes
+	deleteUseless(rpn)   -- pour test groupes
 	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
 	return rpn

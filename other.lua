@@ -52,14 +52,13 @@ function goTest(rpn)
 			i = 1
 			while i > 0 do
 				i = findNextPlus(rpn)
-				print("i=" .. i)
 				compteur = 2
 				while compteur ~= 0 do
 					i = i-1
 					if i > 0 then
-						print("------------------------------------------ compteur = " .. compteur)
-						print("------------------------------------------ cptgrp = " .. cptgrp)
-						print("avant :" .. (lesgroupes[cptgrp] or ""), rpn[i])
+						--print("------------------------------------------ compteur = " .. compteur)
+						--print("------------------------------------------ cptgrp = " .. cptgrp)
+						--print("avant :" .. (lesgroupes[cptgrp] or ""), rpn[i])
 						
 						if rpn[i] == "+" then -- il a normalement déjà été traité
 							lesgroupes[cptgrp] = lesgroupes[cptgrp-2] .. lesgroupes[cptgrp-1] .. "+ " .. (lesgroupes[cptgrp] or "")
@@ -68,7 +67,7 @@ function goTest(rpn)
 							i = i - #lesgroupestables1 - #lesgroupestables2
 						else
 							lesgroupes[cptgrp] = rpn[i] .. " " .. (lesgroupes[cptgrp] or "")
-							print("apres :" .. lesgroupes[cptgrp], rpn[i])
+							--print("apres :" .. lesgroupes[cptgrp], rpn[i])
 							if operator[rpn[i]] then
 								compteur = compteur+2
 							end
@@ -94,9 +93,9 @@ function goTest(rpn)
 				end
 				print(tblinfo(rpn))
 				
-				while getNextOp(rpn) ~= "+" and getNextOp(rpn) do
+			--[[	while getNextOp(rpn) ~= "+" and getNextOp(rpn) do
 					temp = (lesgroupes[nbrDeGroupes-1] or "") .. (lesgroupes[nbrDeGroupes] or "")
-					if getNextOp(rpn) ~= "+" and getNextOp(rpn) then
+					if getNextOp(rpn) ~= "+" and getNextOp(rpn) and not operator(rpn[findNextOp(rpn)+1]) then
 						for k=1,findNextOp(rpn) do
 							temp = temp .. rpn[k] .. " "
 						end
@@ -107,6 +106,13 @@ function goTest(rpn)
 					end
 
 				end
+			]]--
+			
+				lesgroupes = resort(lesgroupes)
+
+				lesgroupes[nbrDeGroupes-1],lesgroupes[nbrDeGroupes] = lesgroupes[nbrDeGroupes],lesgroupes[nbrDeGroupes-1]
+				gr = (lesgroupes[nbrDeGroupes] or "niiil") .. (lesgroupes[nbrDeGroupes-1] or "nooool") .. "+ "
+				table.insert(rpn,1,gr)
 				
 				i = findNextPlus(rpn) -- RHAAAAA
 					
@@ -116,6 +122,8 @@ function goTest(rpn)
 			for k,v in pairs(lesgroupes) do
 				print(k,v)
 			end
+			print("------")
+			print("rpn = " .. tblinfo(rpn))
 			print("   TEST END")
 			
 			------- test
@@ -147,4 +155,18 @@ function afficheTable(tbl)
 	for _,v in pairs(tbl) do
 		str = str .. tblinfo(v)
 	end
+end
+
+function resort(table)
+	local indexes = {}
+	for k,_ in pairs(table) do
+	    indexes[#indexes+1] = k
+	end
+	local newTable = {}
+	for i=1,#indexes do
+		if table[indexes[i]] then
+			newTable[#newTable+1] = table[indexes[i]]
+		end
+	end
+	return newTable
 end
