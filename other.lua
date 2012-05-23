@@ -160,8 +160,7 @@ end
 function resort(tbl)
 	local newTable = {}
 	for _, value in pairs(tbl) do
-			table.insert(newTable, value)
-		end
+		table.insert(newTable, value)
 	end
 	return newTable
 end
