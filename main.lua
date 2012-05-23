@@ -42,7 +42,7 @@ function main()
 					if colorize(improvedRPN) ~= colorize(input) and chgFlag == 0 then prettyDisplay(improvedRPN) end
 						
 					local simprpn = tblinfo(simplify(toRPN(input)))
-					
+					globalRPN = simprpn
 					debugPrint("   RPN expr of simplified is : " .. colorize(simprpn))
 					debugPrint("   Calculated RPN is " .. colorize(calculateRPN(simprpn)))
 					
@@ -72,7 +72,11 @@ function main()
 				end
 			end
 			
-					
+			io.write("\n")
+			
+			
+			goTest(globalRPN)
+			
 			io.write("\n")
 			io.flush()
 			

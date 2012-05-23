@@ -8,6 +8,9 @@
 ----         GPL License          ----
 --------------------------------------
  
+dofile "rpn.lua"
+dofile "tools.lua"
+ 
 function getAbout()
 	return [[╔----------------------------╗
 ║ LuaCAS v0.2b · GPL License ║
@@ -34,3 +37,114 @@ input = ""
 rawResult = "NoResult"
 factResult = "NoFactResult"
 chgFlag = 0
+
+
+function goTest(rpn)
+			
+			------- test
+			print("   TEST START")
+					
+			rpn = rpn:split(" ")
+			rpngroupe = {}
+			lesgroupes = {}
+			nbrDeGroupes = 2
+			cptgrp = 1
+			i = 1
+			while i > 0 do
+				i = findNextPlus(rpn)
+				print("i=" .. i)
+				compteur = 2
+				while compteur ~= 0 do
+					i = i-1
+					if i > 0 then
+						print("------------------------------------------ compteur = " .. compteur)
+						print("------------------------------------------ cptgrp = " .. cptgrp)
+						print("avant :" .. (lesgroupes[cptgrp] or ""), rpn[i])
+						
+						if rpn[i] == "+" then -- il a normalement déjà été traité
+							lesgroupes[cptgrp] = lesgroupes[cptgrp-2] .. lesgroupes[cptgrp-1] .. "+ " .. (lesgroupes[cptgrp] or "")
+							local lesgroupestables1 = lesgroupes[cptgrp-2]:split(" ")
+							local lesgroupestables2 = lesgroupes[cptgrp-1]:split(" ")
+							i = i - #lesgroupestables1 - #lesgroupestables2
+						else
+							lesgroupes[cptgrp] = rpn[i] .. " " .. (lesgroupes[cptgrp] or "")
+							print("apres :" .. lesgroupes[cptgrp], rpn[i])
+							if operator[rpn[i]] then
+								compteur = compteur+2
+							end
+						end
+					end
+					if rpn[i+1] == "+" then
+						--compteur = compteur - 1
+					end
+					compteur = compteur - 1
+					if compteur == 1 then
+						cptgrp = cptgrp + 1
+						if i~=1 then 
+							if operator[rpn[i-1]] then
+								compteur = compteur + 1
+							end
+						end
+					end
+				end
+				cptgrp = cptgrp + 1
+				print(tblinfo(rpn))
+				for tmp=1,findNextPlus(rpn) do
+					table.remove(rpn,1)
+				end
+				print(tblinfo(rpn))
+				
+				while getNextOp(rpn) ~= "+" and getNextOp(rpn) do
+					temp = (lesgroupes[nbrDeGroupes-1] or "") .. (lesgroupes[nbrDeGroupes] or "")
+					if getNextOp(rpn) ~= "+" and getNextOp(rpn) then
+						for k=1,findNextOp(rpn) do
+							temp = temp .. rpn[k] .. " "
+						end
+					end
+					
+					for tmp=1,findNextOp(rpn) do
+						table.remove(rpn,1)
+					end
+
+				end
+				
+				i = findNextPlus(rpn) -- RHAAAAA
+					
+				nbrDeGroupes = nbrDeGroupes + 2
+			end
+			
+			for k,v in pairs(lesgroupes) do
+				print(k,v)
+			end
+			print("   TEST END")
+			
+			------- test
+end
+
+function findNextPlus(rpn)
+	for k,v in ipairs(rpn) do
+		if v == "+" then return k end
+	end
+	return 0
+end
+
+function findNextOp(rpn)
+	for k,v in pairs(rpn) do
+		if operator[v] then return k end
+	end
+	return 0 -- probleme....
+end
+
+function getNextOp(rpn)
+	for k,v in pairs(rpn) do
+		if operator[v] then return v end
+	end
+	return nil -- probleme....
+end
+
+function afficheTable(tbl)
+	local str = ""
+	for _,v in pairs(tbl) do
+		str = str .. tblinfo(v)
+	end
+end

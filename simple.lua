@@ -57,7 +57,7 @@ function simplify(rpn)
 	sortit2(rpn)
 	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
-	deleteUseless(rpn)
+	--deleteUseless(rpn)   -- pour test groupes
 	simpleFactor(rpn)
 	if needReSimplify then simplify(rpn) end
 	return rpn
@@ -182,7 +182,7 @@ function creategroup(datatable, operator, startgroup)
 		table.insert(group, tostring(value))	-- tostring to be sure all data is in strings when we put it back in the RPN table
 		table.insert(group, operator)
 	end
-
+	
 	return group
 end
 

@@ -146,6 +146,24 @@ function dump(name, reference)
 	end
 end
 
+function treeDump(name, reference)
+	if type(reference) == "userdata" then
+		reference = getmetatable(reference)
+	end
+	
+	if type(reference) == "table" and not DDDONE[reference] and name ~= "DDDONE" then
+		DDDONE[reference] = true
+		print(tostring(name))
+		add = add .. "\t"
+		table.foreach(reference, dump)
+		add = add:sub(1,#add-1)
+	elseif type(reference) == "function" then
+		print(name)
+	else
+		print(reference)
+	end
+end
+
 function colorize(str)
 	str = tostring(str)
     str = str:gsub("%(",colors.yellow .. "%(" .. colors.reset)
