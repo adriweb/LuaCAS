@@ -18,7 +18,7 @@ local commands = {
 	["sum"] = function(argsTable) cmdResult = "sum called on " .. tblinfo(argsTable) end,
 	["product"] = function(argsTable) cmdResult = "product called on " .. tblinfo(argsTable) end,
 	["integral"] = function(argsTable) cmdResult = "integral called on " .. tblinfo(argsTable) end,
-	["showAbout"] = function(argsTable) cmdResult = getAbout() end,
+	["showAbout"] = function(argsTable) cmdResult = c_multiSpace .. getAbout() end,
 	["showStatus"] = function(argsTable) cmdResult = getStatus() end,
 	["help"] = function(argsTable) cmdResult = getHelp() end,
 	["debugON"] = function(argsTable) showDebug = true cmdResult = "---Debug output enabled---" end,

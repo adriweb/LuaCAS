@@ -12,6 +12,13 @@
 dofile "other.lua"
  
 needReSimplify = false
+possibleCommut = {}
+doneCommut = {}
+alreadyCommut = {}
+commutList = {}
+possibleCommut = {}
+isSimplifying = 0
+alreadyPassed = 0
 
 function areNumeric(a,b)
 	return isNumeric(a) and isNumeric(b)
@@ -41,19 +48,10 @@ function div(a,b)
 	end
 end	
 
-isSimplifying = 0
-alreadyPassed = 0
-
 function simplify(rpn)
 	isSimplifying = isSimplifying + 1
-	replaceNegative(rpn)
-	sortit(rpn)
-	sortit2(rpn)
-	create1x(rpn)
-	replaceP(rpn)
-	simpleFactor(rpn)
-	--if needReSimplify then simplify(rpn) end
-	deleteUseless(rpn)
+	symplifyBetter(rpn)
+	
 	if needReSimplify or isSimplifying==1 then getNewRPN(rpn) end
 	if needReSimplify then 
 		rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
@@ -61,10 +59,43 @@ function simplify(rpn)
 	end
 	rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
 	if alreadyPassed == 0 then alreadyPassed = 1 needReSimplify = false simplify(rpn) end
-	--dump("avantresimp",rpn)
+	
+	for _,v in pairs(commutList) do
+		local tempCommutTbl = {}
+		tempCommutTbl = tostring(v):split("")
+		
+		for _,valeur in pairs(tempCommutTbl) do
+			rpn = commut(lesgroupes,valeur)
+		end
+	
+		symplifyBetter(rpn)
+	
+		tempor = nil
+		
+		for _,valeur in pairs(tempCommutTbl) do
+				table.insert(tempor,valeur,1)
+		end
+		
+		for _,valeur in pairs(tempor) do
+				rpn = commut(lesgroupes,valeur)
+		end
+	
+	end
+	
 	sortit(rpn)
 	sortit2(rpn)
 	return rpn
+end
+
+function symplifyBetter(rpn)
+
+		replaceNegative(rpn)
+		sortit(rpn)
+		sortit2(rpn)
+		create1x(rpn)
+		replaceP(rpn)
+		simpleFactor(rpn)
+		deleteUseless(rpn)
 end
 
 function infixSimplify(infix)
@@ -404,26 +435,12 @@ function detectCommutGroup(rpn)
 				end
 				--print(tblinfo(rpn))
 				
-			--[[	while getNextOp(rpn) ~= "+" and getNextOp(rpn) do
-					temp = (lesgroupes[nbrDeGroupes-1] or "") .. (lesgroupes[nbrDeGroupes] or "")
-					if getNextOp(rpn) ~= "+" and getNextOp(rpn) and not operator(rpn[findNextOp(rpn)+1]) then
-						for k=1,findNextOp(rpn) do
-							temp = temp .. rpn[k] .. " "
-						end
-					end
-					
-					for tmp=1,findNextOp(rpn) do
-						table.remove(rpn,1)
-					end
-
-				end
-			]]--
 			
 				lesgroupes = resort(lesgroupes)
 
 				lesgroupes[nbrDeGroupes-1],lesgroupes[nbrDeGroupes] = lesgroupes[nbrDeGroupes],lesgroupes[nbrDeGroupes-1]
 				if lesgroupes[nbrDeGroupes] or lesgroupes[nbrDeGroupes-1] then
-					gr = (lesgroupes[nbrDeGroupes] or "") .. (lesgroupes[nbrDeGroupes-1] or "") .. "+ "
+					gr = (lesgroupes[nbrDeGroupes-1] or "") .. (lesgroupes[nbrDeGroupes] or "") .. "+ "
 					table.insert(rpn,1,gr)
 				end
 				
@@ -462,6 +479,10 @@ function detectCommutGroup(rpn)
 				
 			rpn = nil
 			rpn = copyTable(rpnCopy)
+			
+			
+			dump("lesgroupes",lesgroupes)
+			lookForSimilarVariable(lesgroupes)
 
 end
 
@@ -504,3 +525,73 @@ function symbolify(infix)
 	return infix
 end
 
+
+function lookForSimilarVariable(lesgroupes)
+	local temp1,temp2
+	possibleCommut = {}
+	for i=1,#lesgroupes,2 do
+		temp1=lesgroupes[i]:split(" ")
+		temp2=lesgroupes[i+1]:split(" ")
+
+		for _,v in pairs(temp1) do
+			for _,p in pairs(temp2) do
+				if v and v == p and v ~= "" and not operator[v] and possibleCommut[#possibleCommut] ~= i then 
+					table.insert(possibleCommut,i)
+				end
+			end
+		end
+	
+	end
+	return possibleCommut
+	
+end
+
+
+function generateEachCommmut(possibleCommut,rpn)
+
+	local commutList = {}
+	for _,v in pairs(possibleCommut) do
+		for _,w in pairs(possibleCommut) do
+			if v>w then
+			for _,x in pairs(possibleCommut) do
+				if x<w then
+				for _,y in pairs(possibleCommut) do
+					if x>y then
+						table.insert(commutList,v .. w .. x .. y)
+					elseif commutList[#commutList] ~= v .. w .. x then
+						table.insert(commutList,v .. w .. x)
+					end
+				end
+				elseif commutList[#commutList] ~= v .. w then
+					table.insert(commutList,v .. w)
+				end
+			end
+			elseif commutList[#commutList] ~= v then
+				table.insert(commutList,v)
+			end
+		end
+	end
+	return commutList
+end
+
+function commut(lesgroupes,i)
+	
+	local toCommutStart = tostring(lesgroupes[i])
+	local toCommutEnd = tostring(lesgroupes[i+1])
+	
+	for k=1,(#lesgroupes[i]+#lesgroupes[i+1]) do
+		toCommutStart = toCommutStart:gsub("  "," ")
+		toCommutEnd = toCommutEnd:gsub("  "," ")
+	end
+	
+	toCommutStart = toCommutStart:split(" ")
+	toCommutEnd = toCommutEnd:split(" ")
+	
+	local tempRpn = (table.concat(rpn," "):gsub("  "," ")):split(" ")
+
+	for k=1,#toCommutStart-1 do
+		table.insert(tempRpn,#toCommutEnd+#toCommutStart-1,tempRpn[1])
+		table.remove(tempRpn,1)
+	end
+	return tempRpn
+end

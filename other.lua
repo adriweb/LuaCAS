@@ -21,7 +21,7 @@ function getAbout()
 	]]
 end
 
-c_multiSpace = [[ 
+c_multiSpace = [[
  ]]
  
 function getStatus()
