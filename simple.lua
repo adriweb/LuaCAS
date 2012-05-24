@@ -56,7 +56,6 @@ function simplify(rpn)
 	deleteUseless(rpn)
 	if needReSimplify or isSimplifying==1 then getNewRPN(rpn) end
 	if needReSimplify then 
-		print("I GOTZ RESIMPLIFY")
 		rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
 		simplify(rpn) 
 	end
