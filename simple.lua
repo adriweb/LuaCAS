@@ -49,8 +49,10 @@ function div(a,b)
 end	
 
 function simplify(rpn)
+
+	local rpn2 = {}
 	isSimplifying = isSimplifying + 1
-	symplifyBetter(rpn)
+	symplifyTheRetour(rpn)
 	
 	if needReSimplify or isSimplifying==1 then getNewRPN(rpn) end
 	if needReSimplify then 
@@ -60,26 +62,48 @@ function simplify(rpn)
 	rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
 	if alreadyPassed == 0 then alreadyPassed = 1 needReSimplify = false simplify(rpn) end
 	
+	needReSimplify = false
+
 	for _,v in pairs(commutList) do
+		print("commutList valeur : "..v)
 		local tempCommutTbl = {}
-		tempCommutTbl = tostring(v):split("")
-		
+		for tmpvar=1,string.len(tostring(v)) do
+			table.insert(tempCommutTbl,string.sub(tostring(v),tmpvar,tmpvar))
+		end
+		dump("tempCommutTbl",tempCommutTbl)
+		dump("rpn",rpn)
 		for _,valeur in pairs(tempCommutTbl) do
-			rpn = commut(lesgroupes,valeur)
+			rpn2 = commut(lesgroupes,valeur,rpn)
+			print("----------------------------------------------------------")
+			dump("rpn2",rpn2)
 		end
-	
-		symplifyBetter(rpn)
-	
-		tempor = nil
+		dump("rpn",rpn)
+		dump("rpn2",rpn2)
+		symplifyTheRetour(rpn2)
 		
-		for _,valeur in pairs(tempCommutTbl) do
-				table.insert(tempor,valeur,1)
+		if #rpn2 < #rpn then 
+			rpn = nil
+			rpn = copyTable(rpn2)
+			needReSimplify = true
+		else
+			tempor = {}
+			
+			for _,valeur in pairs(tempCommutTbl) do
+					table.insert(tempor,valeur,1)
+			end
+			
+			for _,valeur in pairs(tempor) do
+					rpn = commut(lesgroupes,valeur,rpn)
+			end
+			rpn2 = nil
 		end
-		
-		for _,valeur in pairs(tempor) do
-				rpn = commut(lesgroupes,valeur)
-		end
+		dump("rpn",rpn)
+	end
 	
+	if needReSimplify then 
+		rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
+		isSimplifying = 0
+		simplify(rpn) 
 	end
 	
 	sortit(rpn)
@@ -87,7 +111,7 @@ function simplify(rpn)
 	return rpn
 end
 
-function symplifyBetter(rpn)
+function symplifyTheRetour(rpn)
 
 		replaceNegative(rpn)
 		sortit(rpn)
@@ -482,7 +506,11 @@ function detectCommutGroup(rpn)
 			
 			
 			dump("lesgroupes",lesgroupes)
-			lookForSimilarVariable(lesgroupes)
+			possibleCommut = lookForSimilarVariable(lesgroupes)
+			dump("-------possibleCommut",possibleCommut)
+			commutList = generateEachCommmut(possibleCommut,rpn)
+			dump("-------commutList",commutList)
+
 
 end
 
@@ -525,14 +553,13 @@ function symbolify(infix)
 	return infix
 end
 
-
 function lookForSimilarVariable(lesgroupes)
+
 	local temp1,temp2
 	possibleCommut = {}
 	for i=1,#lesgroupes,2 do
 		temp1=lesgroupes[i]:split(" ")
 		temp2=lesgroupes[i+1]:split(" ")
-
 		for _,v in pairs(temp1) do
 			for _,p in pairs(temp2) do
 				if v and v == p and v ~= "" and not operator[v] and possibleCommut[#possibleCommut] ~= i then 
@@ -540,15 +567,12 @@ function lookForSimilarVariable(lesgroupes)
 				end
 			end
 		end
-	
 	end
+		
 	return possibleCommut
-	
 end
 
-
 function generateEachCommmut(possibleCommut,rpn)
-
 	local commutList = {}
 	for _,v in pairs(possibleCommut) do
 		for _,w in pairs(possibleCommut) do
@@ -574,23 +598,25 @@ function generateEachCommmut(possibleCommut,rpn)
 	return commutList
 end
 
-function commut(lesgroupes,i)
-	
+function commut(lesgroupes,i,rpn)
+	i = tonumber(i)
 	local toCommutStart = tostring(lesgroupes[i])
 	local toCommutEnd = tostring(lesgroupes[i+1])
+	print(toCommutStart,toCommutEnd)
 	
-	for k=1,(#lesgroupes[i]+#lesgroupes[i+1]) do
+	for k=1,(toCommutStart:len()+toCommutEnd:len()) do
 		toCommutStart = toCommutStart:gsub("  "," ")
 		toCommutEnd = toCommutEnd:gsub("  "," ")
 	end
 	
 	toCommutStart = toCommutStart:split(" ")
 	toCommutEnd = toCommutEnd:split(" ")
-	
+	print("--------------------rpn :",tblinfo(rpn))
 	local tempRpn = (table.concat(rpn," "):gsub("  "," ")):split(" ")
+	print("tempRpn : " .. tblinfo(tempRpn))
 
-	for k=1,#toCommutStart-1 do
-		table.insert(tempRpn,#toCommutEnd+#toCommutStart-1,tempRpn[1])
+	for k=1,#toCommutStart do
+		table.insert(tempRpn,#toCommutEnd+#toCommutStart+1,tempRpn[1])
 		table.remove(tempRpn,1)
 	end
 	return tempRpn
