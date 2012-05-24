@@ -42,7 +42,7 @@ function div(a,b)
 end	
 
 isSimplifying = 0
-OMGLAVARIABLE = 0
+alreadyPassed = 0
 
 function simplify(rpn)
 	isSimplifying = isSimplifying + 1
@@ -60,7 +60,7 @@ function simplify(rpn)
 		simplify(rpn) 
 	end
 	rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
-	if OMGLAVARIABLE == 0 then OMGLAVARIABLE = 1 needReSimplify = false simplify(rpn) end
+	if alreadyPassed == 0 then alreadyPassed = 1 needReSimplify = false simplify(rpn) end
 	--dump("avantresimp",rpn)
 	sortit(rpn)
 	sortit2(rpn)
