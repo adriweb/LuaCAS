@@ -74,10 +74,6 @@ function main()
 			
 			io.write("\n")
 			
-			
-			goTest(globalRPN)
-			
-			io.write("\n")
 			io.flush()
 			
 			chgFlag = 0

@@ -8,6 +8,8 @@
 ----         GPL License          ----
 --------------------------------------
 -- Parts also by Jim Bauwens
+
+dofile "other.lua"
  
 needReSimplify = false
 
@@ -40,26 +42,29 @@ function div(a,b)
 end	
 
 isSimplifying = 0
+OMGLAVARIABLE = 0
 
 function simplify(rpn)
 	isSimplifying = isSimplifying + 1
 	replaceNegative(rpn)
-	simpleFactor(rpn)
 	sortit(rpn)
 	sortit2(rpn)
 	create1x(rpn)
-	if needReSimplify then simplify(rpn) end
 	replaceP(rpn)
 	simpleFactor(rpn)
-	if needReSimplify then simplify(rpn) end
-	simpleFactor(rpn)
+	--if needReSimplify then simplify(rpn) end
+	deleteUseless(rpn)
+	if needReSimplify or isSimplifying==1 then getNewRPN(rpn) end
+	if needReSimplify then 
+		print("I GOTZ RESIMPLIFY")
+		rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
+		simplify(rpn) 
+	end
+	rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
+	if OMGLAVARIABLE == 0 then OMGLAVARIABLE = 1 needReSimplify = false simplify(rpn) end
+	--dump("avantresimp",rpn)
 	sortit(rpn)
 	sortit2(rpn)
-	simpleFactor(rpn)
-	if needReSimplify then simplify(rpn) end
-	deleteUseless(rpn)   -- pour test groupes
-	simpleFactor(rpn)
-	if needReSimplify then simplify(rpn) end
 	return rpn
 end
 
@@ -341,6 +346,132 @@ function simpleFactor(rpn, start)
 	end
 	if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
 	return rpn
+end
+
+function detectCommutGroup(rpn)
+			
+			debugPrint("Entering the new group detection")
+			------- test
+			--print("   TEST START")
+			
+			--print(type(rpn), tblinfo(rpn))		
+			--rpn = rpn:split(" ")
+			rpngroupe = {}
+			lesgroupes = {}
+			nbrDeGroupes = 2
+			cptgrp = 1
+			i = 1
+			while i > 0 do
+				debugPrint("Inside boucle while commut : " .. i)
+				i = findNextPlus(rpn)
+				compteur = 2
+				while compteur ~= 0 do
+					i = i-1
+					if i > 0 then
+						--print("------------------------------------------ compteur = " .. compteur)
+						--print("------------------------------------------ cptgrp = " .. cptgrp)
+						--print("avant :" .. (lesgroupes[cptgrp] or ""), rpn[i])
+						
+						if rpn[i] == "+" then -- il a normalement déjà été traité
+							lesgroupes[cptgrp] = lesgroupes[cptgrp-2] .. lesgroupes[cptgrp-1] .. "+ " .. (lesgroupes[cptgrp] or "")
+							local lesgroupestables1 = lesgroupes[cptgrp-2]:split(" ")
+							local lesgroupestables2 = lesgroupes[cptgrp-1]:split(" ")
+							i = i - #lesgroupestables1 - #lesgroupestables2
+						else
+							lesgroupes[cptgrp] = rpn[i] .. " " .. (lesgroupes[cptgrp] or "")
+							--print("apres :" .. lesgroupes[cptgrp], rpn[i])
+							if operator[rpn[i]] then
+								compteur = compteur+2
+							end
+						end
+					end
+					if rpn[i+1] == "+" then
+						--compteur = compteur - 1
+					end
+					compteur = compteur - 1
+					if compteur == 1 then
+						cptgrp = cptgrp + 1
+						if i~=1 then 
+							if operator[rpn[i-1]] then
+								compteur = compteur + 1
+							end
+						end
+					end
+				end
+				cptgrp = cptgrp + 1
+				--print(tblinfo(rpn))
+				for tmp=1,findNextPlus(rpn) do
+					table.remove(rpn,1)
+				end
+				--print(tblinfo(rpn))
+				
+			--[[	while getNextOp(rpn) ~= "+" and getNextOp(rpn) do
+					temp = (lesgroupes[nbrDeGroupes-1] or "") .. (lesgroupes[nbrDeGroupes] or "")
+					if getNextOp(rpn) ~= "+" and getNextOp(rpn) and not operator(rpn[findNextOp(rpn)+1]) then
+						for k=1,findNextOp(rpn) do
+							temp = temp .. rpn[k] .. " "
+						end
+					end
+					
+					for tmp=1,findNextOp(rpn) do
+						table.remove(rpn,1)
+					end
+
+				end
+			]]--
+			
+				lesgroupes = resort(lesgroupes)
+
+				lesgroupes[nbrDeGroupes-1],lesgroupes[nbrDeGroupes] = lesgroupes[nbrDeGroupes],lesgroupes[nbrDeGroupes-1]
+				if lesgroupes[nbrDeGroupes] or lesgroupes[nbrDeGroupes-1] then
+					gr = (lesgroupes[nbrDeGroupes] or "") .. (lesgroupes[nbrDeGroupes-1] or "") .. "+ "
+					table.insert(rpn,1,gr)
+				end
+				
+				i = findNextPlus(rpn) -- RHAAAAA
+					
+				nbrDeGroupes = nbrDeGroupes + 2
+			end
+			
+			debugPrint("Fin while commut")
+			local rpnCopy = {}
+			for k,v in pairs(rpn) do
+				local newV = v:gsub("  ", " ")
+				table.insert(rpnCopy, newV:split())
+			end
+			if #rpnCopy > 1 then
+				rpnCopy = copyTable(rpnCopy[2])
+			else
+				rpntemp = copyTable(rpnCopy[1])
+				rpnCopy = nil
+				rpnCopy = copyTable(rpntemp)
+			end
+			local tmpRPN = {}
+			for indice=1,#rpnCopy do
+				if rpnCopy[indice] or rpnCopy[indice]~="" or rpnCopy[indice]~=" " then
+					table.insert(tmpRPN,rpnCopy[indice])
+				end
+			end
+			rpnCopy = nil
+			rpnCopy = copyTable(tmpRPN)
+			
+			for k,v in pairs(rpnCopy) do
+				if not v then table.remove(rpnCopy[k]) end
+			end
+			
+			table.remove(rpnCopy,#rpnCopy)
+				
+			rpn = nil
+			rpn = copyTable(rpnCopy)
+
+end
+
+
+function getNewRPN(rpn)
+	oldrpn = nil
+	oldrpn = copyTable(rpn)
+	detectCommutGroup(rpn)
+	needReSimplify = true
 end
 
 function cc(tbl)
