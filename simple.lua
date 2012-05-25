@@ -549,7 +549,7 @@ function lookForSimilarVariable(lesgroupes)
 	return possibleCommut
 end
 
-function generateEachCommmut(possibleCommut,rpn)
+--[[function generateEachCommmut(possibleCommut,rpn)
 	local commutList = {}
 	for _,v in pairs(possibleCommut) do
 		for _,w in pairs(possibleCommut) do
@@ -572,6 +572,21 @@ function generateEachCommmut(possibleCommut,rpn)
 			end
 		end
 	end
+	return commutList
+end]]--  obsolete thanks to Jim : see below these 2 new functions : 
+
+function generateEachCommmutHelper(possibleCommut, commutList, pos, length, add)
+	for i=pos, length do
+		local toadd	= add .. possibleCommut[i]
+		table.insert(commutList, toadd)
+		generateEachCommmutHelper(possibleCommut, commutList, i+1, length, toadd)
+	end
+end	
+
+function generateEachCommmut(possibleCommut,rpn)
+	local commutList = {}
+	table.sort(possibleCommut)
+	generateEachCommmutHelper(possibleCommut, commutList, 1, #possibleCommut, "")
 	return commutList
 end
 
