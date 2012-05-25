@@ -1,21 +1,22 @@
---------------------------------------
-----           LuaCAS             ----
-----            v0.2              ----
-----                              ----
-----  Adrien 'Adriweb' Bertrand   ----
-----            2012              ----
-----                              ----
-----         GPL License          ----
---------------------------------------
+-------------------------------------
+----            LuaCAS           ----
+----             v0.3            ----
+----                             ----
+----  Adrien 'Adriweb' Bertrand  ----
+----             2012            ----
+----                             ----
+----         GPL License         ----
+-------------------------------------
  
 dofile "rpn.lua"
 dofile "tools.lua"
  
 function getAbout()
 	return [[╔----------------------------╗
-║ LuaCAS v0.2b · GPL License ║
+║  LuaCAS 0.3 · GPL License  ║
 ╠----------------------------╢
 ║  (C) 2012 Adrien Bertrand  ║
+║    and Alexandre Gensse.   ║
 ║ Many Thanks to Jim Bauwens ║
 ╚----------------------------╝
 	]]
@@ -27,7 +28,6 @@ c_multiSpace = [[
 function getStatus()
 	return colorize("showSteps : " .. tostring(showSteps) .. c_multiSpace .. "       showDebug : " .. tostring(showDebug) .. c_multiSpace .. "       showTree : " .. tostring(showTree))
 end
-
 
 showDebug = false
 showTree = false

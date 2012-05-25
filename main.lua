@@ -1,12 +1,12 @@
---------------------------------------
-----           LuaCAS             ----
-----            v0.2              ----
-----                              ----
-----  Adrien 'Adriweb' Bertrand   ----
-----            2012              ----
-----                              ----
-----         GPL License          ----
---------------------------------------
+-------------------------------------
+----            LuaCAS           ----
+----             v0.3            ----
+----                             ----
+----  Adrien 'Adriweb' Bertrand  ----
+----             2012            ----
+----                             ----
+----         GPL License         ----
+-------------------------------------
 
 dofile 'other.lua'
 dofile 'tools.lua'
@@ -14,7 +14,6 @@ dofile 'rpn.lua'
 dofile 'simple.lua'
 dofile 'rpn2infix.lua'
 dofile 'commands.lua'
-dofile 'polyClass.lua'
 
 
 function main()
@@ -50,7 +49,7 @@ function main()
 						debugPrint("   got variable error in calculateRPN!")
 						finalRes = convertRPN2Infix(simprpn)
 					else
-						print("this should never appear ? (main:53). simprpn was = ", simprpn)
+						print("this should never appear ? (main:52). simprpn was = ", simprpn)
 						finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+"..input))))
 					end
 					debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))

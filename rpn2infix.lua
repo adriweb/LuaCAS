@@ -1,12 +1,12 @@
---------------------------------------
-----           LuaCAS             ----
-----            v0.2              ----
-----                              ----
-----  Adrien 'Adriweb' Bertrand   ----
-----            2012              ----
-----                              ----
-----         GPL License          ----
---------------------------------------
+-------------------------------------
+----            LuaCAS           ----
+----             v0.3            ----
+----                             ----
+----  Adrien 'Adriweb' Bertrand  ----
+----             2012            ----
+----                             ----
+----         GPL License         ----
+-------------------------------------
 -- Lua Port and additions/fixes by Adriweb from : 
 -- http://blog.boyet.com/blog/blog/postfix-to-infix-part-2-adding-the-parentheses/
  

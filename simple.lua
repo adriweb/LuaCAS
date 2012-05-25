@@ -1,12 +1,13 @@
---------------------------------------
-----           LuaCAS             ----
-----            v0.2              ----
-----                              ----
-----  Adrien 'Adriweb' Bertrand   ----
-----            2012              ----
-----                              ----
-----         GPL License          ----
---------------------------------------
+-------------------------------------
+----            LuaCAS           ----
+----             v0.3            ----
+----                             ----
+----  Adrien 'Adriweb' Bertrand  ----
+----       Alexandre Gensse      ----
+----             2012            ----
+----                             ----
+----         GPL License         ----
+-------------------------------------
 -- Parts also by Jim Bauwens
 
 dofile "other.lua"
@@ -19,7 +20,6 @@ commutList = {}
 possibleCommut = {}
 alreadyPassed = 0
 rpnSave = {}
-
 
 function areNumeric(a,b)
 	return isNumeric(a) and isNumeric(b)
@@ -199,7 +199,6 @@ function sortit2(rpn, offs)
 			break
 		end
 	end
-	
 
 	if pos then
 		local j	= 0
@@ -447,13 +446,10 @@ function detectCommutGroup(rpn)
 					end
 				end
 				cptgrp = cptgrp + 1
-				--print(tblinfo(rpn))
 				for tmp=1,findNextPlus(rpn) do
 					table.remove(rpn,1)
 				end
-				--print(tblinfo(rpn))
-				
-			
+	
 				lesgroupes = resort(lesgroupes)				
 				lesgroupes[nbrDeGroupes-1],lesgroupes[nbrDeGroupes] = lesgroupes[nbrDeGroupes],lesgroupes[nbrDeGroupes-1]
 				if lesgroupes[nbrDeGroupes] or lesgroupes[nbrDeGroupes-1] then
@@ -461,7 +457,7 @@ function detectCommutGroup(rpn)
 					table.insert(rpn,1,gr)
 				end
 				
-				i = findNextPlus(rpn) -- RHAAAAA
+				i = findNextPlus(rpn)
 					
 				nbrDeGroupes = nbrDeGroupes + 2
 			end
@@ -501,12 +497,6 @@ function detectCommutGroup(rpn)
 			commutList = generateEachCommmut(possibleCommut,rpn)
 	return commutList
 
-end
-
-
-function getNewRPN(rpn)
-	needReSimplify = true
-	return detectCommutGroup(rpn)
 end
 
 function cc(tbl)
@@ -595,13 +585,12 @@ function commut(lesgroupes,i,rpn)
 		toCommutEnd = toCommutEnd:gsub("   ","  "):gsub("  "," ")
 	end
 	
-	
 	toCommutStart = toCommutStart:split(" ")
 	toCommutEnd = toCommutEnd:split(" ")
 	local tempRpn = (table.concat(rpn," "):gsub("  "," ")):split(" ")
 
 	for k=1,#toCommutStart-1 do
-		table.insert(tempRpn,#toCommutEnd+#toCommutStart-1,strReplace(tempRpn[1],"  "," "))
+		table.insert(tempRpn,#toCommutEnd+#toCommutStart-1,strReplace(tempRpn[1],"  "," "))  -- omg fix this .... should be +1, not -1 (it works but we don't know why.....)
 		table.remove(tempRpn,1)
 	end
 	return tempRpn
