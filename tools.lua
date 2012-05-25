@@ -104,6 +104,23 @@ function tblinfo(tbl)
 	return out
 end
 
+function tblinfo2(tbl)
+	local out = ""
+	for k, v in pairs(tbl) do
+		out	= out .. v .. [[ 
+ ]]
+		--print(k, v)
+	end
+	return out
+end
+
+function strReplace(str,pattern,remplacement)
+	local new,index
+	str = tostring(str)
+	new,index = string.gsub(str,pattern,remplacement)
+	return new
+end
+
 function isNumeric(str)
 	return tonumber(str) ~= nil
 end
