@@ -56,7 +56,7 @@ function simplify2(rpn)
 		sortit2(rpn)
 		create1x(rpn)
 		replaceP(rpn)
-		simpleFactor(rpn)
+		rpn = simpleFactor(rpn)
 		deleteUseless(rpn)
 	
 	if needReSimplify or isSimplifying==1 then commutlist = detectCommutGroup(rpn) isSimplifying = 1 end
@@ -71,19 +71,20 @@ end
 
 function simplify(rpn)
 
-		perfectRpn = {}
 	    isSimplifying = 0
 		needReSimplify = false
 		rpn = simplify2(rpn)
 		needReSimplify = true
-		
-		--print("rpn = " .. tblinfo(rpn))
-		--print("findNextPlus(rpn) = " .. findNextPlus(rpn))
-		--if findNextPlus(rpn) == 0 then print("rpn = " .. tblinfo(rpn)) return rpn end
-		
-		local perfectRpn = {}
-		
+					
+		local perfectRpn = copyTable(rpn)
+
 		while needReSimplify do
+			debugPrint("	Entering simplify's commut find loop")
+			if findNextPlus(rpn) == 0 then 
+				perfectRpn = {}
+				perfectRpn = copyTable(simpleFactor(rpn))
+				break
+			end
 			rpn = table.concat(rpn," "):gsub("   ","  "):gsub("  "," "):split(" ")
 			local commutList2 = detectCommutGroup(rpn)
 			listRpn = createPossibleRpnTable(rpn,commutList2)
@@ -104,7 +105,9 @@ function simplify(rpn)
 				end
 			rpn = {}
 			rpn = copyTable(perfectRpn)
-		end		
+		end	
+		perfectRpn = sortit(perfectRpn)
+		perfectRpn = sortit2(perfectRpn)
 		return perfectRpn
 end
 
@@ -344,7 +347,6 @@ function simpleFactor(rpn, start)
 	local oldrpn = copyTable(rpn)
 	
 	-- TODO  :   algo simplification pour fractions avec haut == bas  ( -> 1)
-	
 	while i<#rpn-5 do -- minimum required to perform any factorization ([coeff1][insideOP1][var][globalOP][coeff2][insideOP2][var])
 					  -- which is in RPN : [coeff1][var][insideOP1][coeff2][var][insideOP2][globalOP]
 		-- let's find in the RPN stack the place where there are two operators in a row.
@@ -377,6 +379,7 @@ function simpleFactor(rpn, start)
 							table.remove(rpn,i+5)
 							factResult = convertRPN2Infix(tblinfo(rpn))
 							stepsPrettyDisplay(convertRPN2Infix(tblinfo(rpn)))
+							rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
 						end
 					end
 				end
@@ -384,9 +387,9 @@ function simpleFactor(rpn, start)
 		i=i+1
 		
 	end
+	
 	--if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
 	if (#oldrpn > #rpn) then needReSimplify = true else needReSimplify = false end
-	
 	
 	return rpn
 end

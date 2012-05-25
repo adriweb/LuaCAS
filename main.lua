@@ -56,7 +56,6 @@ function main()
 					debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
 
 					rawResult = finalRes
-
 					if colorize(factResult) ~= colorize(finalRes) and (improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input)) then
 						prettyDisplay(finalRes)
 					elseif not showSteps then
