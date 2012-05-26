@@ -28,16 +28,18 @@ function main()
                 chgFlag = 1
             end
 
+            symbolify(input)
+
             _, finalRes = pcall(loadstring("return " .. input) or function() end)
             -- finalRes will contain the result if possible.
 
-            symbolify(input)
             if not checkCommand(input) then
                 if type(finalRes) ~= "number" then
                     debugPrint("   Direct Calculation (via lua math engine) not possible.")
                     debugPrint("   RPN expr is : " .. tblinfo(toRPN(input)))
 
                     local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input))):sub(3)
+                    improvedRPN = convertRPN2Infix(tblinfo(toRPN(input)))
                     if colorize(improvedRPN) ~= colorize(input) and chgFlag == 0 then prettyDisplay(improvedRPN) end
 
                     local simprpn = tblinfo(simplify(toRPN(input)))
@@ -64,7 +66,7 @@ function main()
                     end
 
                 else
-                    debugPrint("   Direct Calculation via lua math engine.")
+                    debugPrint("   Direct Calculation (via lua math engine).")
                     rawResult = finalRes
                     prettyDisplay(finalRes)
                 end

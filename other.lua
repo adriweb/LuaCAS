@@ -23,10 +23,10 @@ function getAbout()
 end
 
 c_multiSpace = [[
- ]]
+  ]]
 
 function getStatus()
-    return colorize("showSteps : " .. tostring(showSteps) .. c_multiSpace .. "       showDebug : " .. tostring(showDebug) .. c_multiSpace .. "       showTree : " .. tostring(showTree))
+    return colorize("showSteps : " .. tostring(showSteps) .. c_multiSpace .. "       showDebug : " .. tostring(showDebug) .. c_multiSpace .. "       showTree : " .. tostring(showTree).. "       showColors : " .. tostring(showColors))
 end
 
 showDebug = false
@@ -71,20 +71,6 @@ function resort(tbl)
     local newTable = {}
     for _, value in pairs(tbl) do
         table.insert(newTable, value)
-    end
-    return newTable
-end
-
-function badresort(table)
-    local indexes = {}
-    for k, _ in pairs(table) do
-        indexes[#indexes + 1] = k
-    end
-    local newTable = {}
-    for i = 1, #indexes do
-        if table[indexes[i]] then
-            newTable[#newTable + 1] = table[indexes[i]]
-        end
     end
     return newTable
 end

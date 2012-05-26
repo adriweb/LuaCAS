@@ -87,6 +87,10 @@ function string:split(pattern)
     return list
 end
 
+function justWords(str) local t = {} for w in str:gmatch("%S+") do table.insert(t, w) end return t end
+
+function string:justwords() local t = {} for w in self:gmatch("%S+") do table.insert(t, w) end return t end
+
 function string:split2(pat)
     pat = pat or '%s+'
     local st, g = 1, self:gmatch("()(" .. pat .. ")")
@@ -108,11 +112,13 @@ function tblinfo(tbl)
 end
 
 function tblinfo2(tbl)
-    local out = ""
+    local out = [[
+
+ ]]
     for k, v in pairs(tbl) do
         out = out .. v .. [[
+
  ]]
-        --print(k, v)
     end
     return out
 end
