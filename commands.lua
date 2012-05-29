@@ -9,6 +9,7 @@
 -------------------------------------
 
 dofile'other.lua'
+dofile'simple.lua'
 
 cmdResult = "No Command"
 

@@ -11,7 +11,7 @@
 
 colors = require'ansicolors'
 
-showColors = false
+showColors = true
 
 function debugPrint(...)
     if showDebug then print(...) end
