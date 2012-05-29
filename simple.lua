@@ -79,7 +79,7 @@ function simplify(rpn)
 
     isSimplifying = 0
     needReSimplify = false
-    --rpn = copyTable(alphabetize(rpn))
+    rpn = copyTable(alphabetize(rpn))
 	debugPrint("   Alphabetizing expression")
 	stepsPrettyDisplay(convertRPN2Infix(tblinfo(rpn)))
     rpn = simplify2(rpn)
