@@ -15,6 +15,7 @@ dofile'simple.lua'
 dofile'rpn2infix.lua'
 dofile'commands.lua'
 
+rawResult = ""
 
 function main()
     while input ~= "exit" do
@@ -66,8 +67,10 @@ function main()
                 end
                 
                 cleanOutputStack()
-				rawResult = outputStack[#outputStack]
-
+				rawResult = outputStack[#outputStack] or "NoResult"
+				
+			else 
+				rawResult = "NoResult"
             end
 				
 			unpackOutputStack()

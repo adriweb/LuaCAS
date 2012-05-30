@@ -10,15 +10,11 @@
 
 dofile'other.lua'
 dofile'simple.lua'
+dofile'wolfram.lua'
 
 cmdResult = "No Command"
 
 local commands = {
-    ["diff"] = function(argsTable) cmdResult = "diff called on " .. tblinfo(argsTable) end,
-    ["limit"] = function(argsTable) cmdResult = "limit called on " .. tblinfo(argsTable) end,
-    ["sum"] = function(argsTable) cmdResult = "sum called on " .. tblinfo(argsTable) end,
-    ["product"] = function(argsTable) cmdResult = "product called on " .. tblinfo(argsTable) end,
-    ["integral"] = function(argsTable) cmdResult = "integral called on " .. tblinfo(argsTable) end,
     ["showAbout"] = function(argsTable) cmdResult = c_multiSpace .. getAbout() end,
     ["showStatus"] = function(argsTable) cmdResult = getStatus() end,
     ["help"] = function(argsTable) cmdResult = getHelp() end,
@@ -30,7 +26,9 @@ local commands = {
     ["colorsOFF"] = function(argsTable) showColors = false cmdResult = "---Colors output disabled---" end,
     ["stepsON"] = function(argsTable) showSteps = true cmdResult = "---Steps output enabled---" end,
     ["stepsOFF"] = function(argsTable) showSteps = false cmdResult = "---Steps output disabled---" end,
-    ["lua"] = function(argstable) loadstring(table.concat(argstable," "))() end
+    ["lua"] = function(argstable) loadstring(table.concat(argstable," "))() end,
+    ["wolfram"] = function(argsTable) prettyDisplay(getWolframResult(tblinfo(argsTable))) end,
+	["clear"] = function(argstable) os.execute("cls") end
 }
 
 function checkCommand(input)

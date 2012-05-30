@@ -11,7 +11,7 @@
 
 colors = require'ansicolors'
 
-showColors = true
+showColors = false
 outputStack = {}
 
 function debugPrint(...)
@@ -257,9 +257,9 @@ end
 
 function cleanOutputStack()
 	outputStack = removeTableDuplicates(outputStack)
-	if showSteps or showDebug then 
+	if showSteps or showDebug then
 		table.remove(outputStack,1)
-		local index,length = getShortestValue(outputStack)
+		local index,length = getMultiplications(outputStack)
 		for i=#outputStack, index, -1 do
 			if i ~= index then table.remove(outputStack,i) end
 		end
@@ -273,12 +273,30 @@ function getShortestValue(tt)
 		if v:len() < valueLength or valueLength < 0 then
 			valueLength = v:len()
 			shortestIndex = i
-		end	
+		end
 	end
 	return shortestIndex, valueLength
 end
 
--- Count the number of times a value occurs in a table 
+function getMultiplications(tt)
+	local index = -1
+	local numbers = -1
+	for i,v in ipairs(tt) do
+		if Count_Substring(v,"*") <= numbers or numbers < 0 then
+			numbers = Count_Substring(v,"*")
+			index = i
+		end
+	end
+	return index, numbers
+end
+
+function Count_Substring( s1, s2 )
+ local magic =  "[%^%$%(%)%%%.%[%]%*%+%-%?]"
+ local percent = function(s)return "%"..s end
+    return select( 2, s1:gsub( s2:gsub(magic,percent), "" ) )
+end
+
+-- Count the number of times a value occurs in a table
 function table_count(tt, item)
   local count
   count = 0
@@ -309,7 +327,7 @@ function removeTableDuplicates2(tbl)
 	local new={}
 	for k,v in pairs(t) do
 		table.insert(new, k)
-	end 
+	end
 	return new
 end
 
