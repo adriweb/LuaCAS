@@ -1,6 +1,6 @@
 -------------------------------------
 ----            LuaCAS           ----
-----             v0.3            ----
+----             v0.4            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
 ----             2012            ----
@@ -111,7 +111,8 @@ function simplify(rpn)
         end
         rpn = copyTable(perfectRpn)
     end
-
+	
+	perfectRpn = copyTable(deleteUseless(perfectRpn))
     perfectRpn = copyTable(alphabetize(perfectRpn))
     return perfectRpn
 end

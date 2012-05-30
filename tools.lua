@@ -1,6 +1,6 @@
 -------------------------------------
 ----            LuaCAS           ----
-----             v0.3            ----
+----             v0.4            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
 ----             2012            ----
@@ -256,20 +256,33 @@ function unpackOutputStack()
 end
 
 function cleanOutputStack()
+	-- TODEBUG / TODO ? : avoid removing good stuff like "x" when showSteps and input == "x" ( now -> "1*x" )
 	outputStack = removeTableDuplicates(outputStack)
+	--print("avant", tblinfo2(outputStack))
 	if showSteps or showDebug then
-		table.remove(outputStack,1)
-		local index,length = getMultiplications(outputStack)
-		for i=#outputStack, index, -1 do
-			if i ~= index then table.remove(outputStack,i) end
+		if #outputStack > 2 then table.remove(outputStack,1) end
+		--print("milieu", tblinfo2(outputStack))
+		local indexMult, lengthMult = getMultiplications(outputStack)
+		local indexShort, lengthShort = getShortestValue(outputStack)
+		local indexLoop = indexShort > indexMult and indexShort or indexMult
+		for i=#outputStack, indexLoop, -1 do
+			if i ~= indexLoop then
+				if outputStack[indexLoop+1] then
+					if outputStack[i]:len() > outputStack[indexLoop+1]:len() then table.remove(outputStack,i) end
+				else 
+					table.remove(outputStack,i)
+				end
+			end
 		end
 	end
+	--print("apres", tblinfo2(outputStack))
 end
 
 function getShortestValue(tt)
 	local shortestIndex = -1
 	local valueLength = -1
 	for i,v in ipairs(tt) do
+		v = tostring(v)
 		if v:len() < valueLength or valueLength < 0 then
 			valueLength = v:len()
 			shortestIndex = i
@@ -291,6 +304,7 @@ function getMultiplications(tt)
 end
 
 function Count_Substring( s1, s2 )
+ s1,s2 = tostring(s1), tostring(s2)
  local magic =  "[%^%$%(%)%%%.%[%]%*%+%-%?]"
  local percent = function(s)return "%"..s end
     return select( 2, s1:gsub( s2:gsub(magic,percent), "" ) )
@@ -306,8 +320,7 @@ function table_count(tt, item)
   return count
 end
 
--- Remove duplicates from a table array (doesn't currently work
--- on key-value tables)
+-- Remove duplicates from a table array (doesn't currently work on key-value tables)
 function removeTableDuplicates(tt)
   local newtable
   newtable = {}
@@ -319,7 +332,7 @@ function removeTableDuplicates(tt)
   return newtable
 end
 
-function removeTableDuplicates2(tbl)
+function removeTableDuplicates2(tbl) -- Jim's sorcery (which is awesome btw)
 	local t={}
 	for k,v in ipairs(tbl) do
 		t[v] = true

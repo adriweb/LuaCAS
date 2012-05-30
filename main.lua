@@ -1,6 +1,6 @@
 -------------------------------------
 ----            LuaCAS           ----
-----             v0.3            ----
+----             v0.4            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
 ----             2012            ----
@@ -24,14 +24,15 @@ function main()
         input = io.read()
         outputStack = {}
         if input:len() > 0 then
-
             if input ~= input:gsub("(Ans)", rawResult) then
                 input = input:gsub("(Ans)", rawResult)
                 chgFlag = 1
             end
 
-            symbolify(input)
-
+            input = symbolify(input)
+            
+            globalInput = input
+			
             _, finalRes = pcall(loadstring("return " .. input) or function() end)
             -- finalRes will contain the result if possible.
 
@@ -53,21 +54,23 @@ function main()
                         debugPrint("   got variable error in calculateRPN!")
                         finalRes = convertRPN2Infix(simprpn)
                     else
-                        print("this should never appear ? (main:52). simprpn was = ", simprpn)
+                        print("this should never appear ? (main:57). simprpn was = ", simprpn)
                         finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+" .. input))))
                     end
                     debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
 					
+                    rawResult = finalRes
 					prettyDisplay(finalRes)
 
                 else
                     debugPrint("   Direct Calculation (via lua math engine).")
                     rawResult = finalRes
+                    outputStack = {}
                     prettyDisplay(finalRes)
                 end
                 
                 cleanOutputStack()
-				rawResult = outputStack[#outputStack] or "NoResult"
+				--rawResult = outputStack[#outputStack] or "NoResult"
 				
 			else 
 				rawResult = "NoResult"

@@ -1,6 +1,6 @@
 -------------------------------------
 ----            LuaCAS           ----
-----             v0.3            ----
+----             v0.4            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
 ----             2012            ----
@@ -35,7 +35,12 @@ function checkCommand(input)
     local cmd
     for k, v in pairs(commands) do
         cmd = string.match(input, k)
-        if cmd then local _, tmp = string.find(input, cmd); doCommand(cmd, input:sub(2 + tmp)) return true end
+        if cmd then
+           	outputStack = {}
+        	local _, tmp = string.find(input, cmd)
+        	doCommand(cmd, input:sub(2 + tmp))
+        	return true
+        end
     end
 end
 

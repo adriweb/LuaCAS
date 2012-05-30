@@ -1,6 +1,6 @@
 -------------------------------------
 ----            LuaCAS           ----
-----             v0.3            ----
+----             v0.4            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
 ----             2012            ----
@@ -38,7 +38,7 @@ function getWolframResult(input)
 	
 	os.execute("curl --silent " .. url .. " > /Users/Adrien/Documents/text.xml")
 	
-	--print(url)
+	debugPrint("Wolfram|Alpha API Request : " .. url)
 	local xfile = xml.load("/Users/Adrien/Documents/text.xml")
 	-- search for substatement having the tag "pod"
 	local resultPod = xfile:find("pod","title","Result")

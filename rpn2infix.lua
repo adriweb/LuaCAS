@@ -1,6 +1,6 @@
 -------------------------------------
 ----            LuaCAS           ----
-----             v0.3            ----
+----             v0.4            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
 ----             2012            ----
@@ -88,6 +88,7 @@ function needParensOnRight(node)
 end
 
 function visit(node)
+	if not node then error("Error during RPN => Infix conversion. Malformed input ?") end
     if node.kind == "number" or node.kind == "variable" then
         return node.value
     end
