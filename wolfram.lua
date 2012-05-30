@@ -36,19 +36,28 @@ function getWolframResult(input)
 	
 	url = '"http://api.wolframalpha.com/v2/query?appid=' .. app_id .. '&input='.. url_encode(input) .. '&format=plaintext"'
 	
-	print("url = ", url)
-	
 	os.execute("curl --silent " .. url .. " > /Users/Adrien/Documents/text.xml")
 	
+	--print(url)
 	local xfile = xml.load("/Users/Adrien/Documents/text.xml")
 	-- search for substatement having the tag "pod"
 	local resultPod = xfile:find("pod","title","Result")
-	local theResultThing = resultPod:find("plaintext")
-	-- if this substatement is found
-	if theResultThing ~= nil then
-		return theResultThing[1]
+	local theResultThing
+	if resultPod then 
+		theResultThing = resultPod:find("plaintext")
 	else
-		return "Sorry, can't get result"
+		resultPod = xfile:find("subpod","title")
+		if resultPod then 
+			theResultThing = resultPod:find("plaintext")
+			if not theResultThing then return input end
+			local egalIndex = theResultThing[1]:find("%s=%s") or 0
+			if egalIndex ~= 0 then
+				egalIndex = egalIndex+3
+			end
+			theResultThing[1] = theResultThing[1]:sub(egalIndex)
+		end
 	end
+
+	return theResultThing and theResultThing[1] or input
 
 end

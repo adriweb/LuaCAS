@@ -738,7 +738,6 @@ function createPossibleRpnTable(theRpnSave, commutList)
     local listRpn = {}
     local theRpn = {}
 
-	--dump("=====================>commutlist : ", tblinfo2(commutList))
     for _, v in pairs(commutList) do
         theRpn = copyTable(theRpnSave)
 
@@ -747,12 +746,6 @@ function createPossibleRpnTable(theRpnSave, commutList)
 			tempCommutTbl = v:split()
 			table.remove(tempCommutTbl,#tempCommutTbl)
 			--dump("tempCommutTbl : ", tempCommutTbl)
-			--if string.sub(tostring(v), tmpvar, tmpvar) ~= " " then
-			--a = a .. string.sub(tostring(v), tmpvar, tmpvar)
-			--elseif string.sub(tostring(v), tmpvar, tmpvar) == " " then
-            --table.insert(tempCommutTbl, a)
-			--a = ""
-			--end
         end
         for _, valeur in pairs(tempCommutTbl) do
             theRpn = commut(lesgroupes, valeur, theRpn)
