@@ -49,26 +49,20 @@ function div(a, b)
 end
 
 function simplify2(rpn)
-
+	
     rpn = copyTable(replaceNegative(rpn))
     rpn = copyTable(simpleFactor(rpn))
     rpn = copyTable(calculateNumericalCoeff(rpn))  -- 5 1 +  ->  6
     rpn = copyTable(create1x(rpn))
     rpn = copyTable(replaceP(rpn))
-
     rpn = copyTable(simpleFactor(rpn))
     rpn = copyTable(deleteUseless(rpn))
-
+	
     if needReSimplify then
         rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
         rpn = copyTable(simplify2(rpn))
     end
-
-   -- if needReSimplify or isSimplifying == 1 then
-   --     commutlist = copyTable(detectCommutGroup(copyTable(rpn)))
-   --    isSimplifying = 1
-   -- end
-
+    
     rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
     if alreadyPassed == 0 then alreadyPassed = 1 needReSimplify = false simplify2(rpn) end
 
@@ -78,11 +72,12 @@ end
 function simplify(rpn)
 
     isSimplifying = 0
-    needReSimplify = false
+    needReSimplify = true
     rpn = copyTable(alphabetize(rpn))
 	debugPrint("   Alphabetizing expression")
 	stepsPrettyDisplay(convertRPN2Infix(tblinfo(rpn)))
     rpn = simplify2(rpn)
+    
     needReSimplify = true
 
     local perfectRpn = copyTable(rpn)

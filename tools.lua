@@ -12,6 +12,7 @@
 colors = require'ansicolors'
 
 showColors = true
+outputStack = {}
 
 function debugPrint(...)
     if showDebug then print(...) end
@@ -237,7 +238,79 @@ function copyTable(tbl)
 end
 
 function prettyDisplay(str)
-    print("     =  " .. colorize(str))
+	if showDebug then
+		print("     =  " .. colorize(str))
+	else
+		table.insert(outputStack,str)
+	end
+end
+
+function unpackOutputStack()
+	if showSteps or showDebug then
+		for _,str in pairs(outputStack) do
+			if str and str~="nil" then print("     =  " .. colorize(str)) end
+		end
+	else
+		print("     =  " .. colorize(outputStack[#outputStack]))
+	end
+end
+
+function cleanOutputStack()
+	outputStack = removeTableDuplicates(outputStack)
+	if showSteps or showDebug then 
+		table.remove(outputStack,1)
+		local index,length = getShortestValue(outputStack)
+		for i=#outputStack, index, -1 do
+			if i ~= index then table.remove(outputStack,i) end
+		end
+	end
+end
+
+function getShortestValue(tt)
+	local shortestIndex = -1
+	local valueLength = -1
+	for i,v in ipairs(tt) do
+		if v:len() < valueLength or valueLength < 0 then
+			valueLength = v:len()
+			shortestIndex = i
+		end	
+	end
+	return shortestIndex, valueLength
+end
+
+-- Count the number of times a value occurs in a table 
+function table_count(tt, item)
+  local count
+  count = 0
+  for ii,xx in pairs(tt) do
+    if item == xx then count = count + 1 end
+  end
+  return count
+end
+
+-- Remove duplicates from a table array (doesn't currently work
+-- on key-value tables)
+function removeTableDuplicates(tt)
+  local newtable
+  newtable = {}
+  for ii,xx in ipairs(tt) do
+    if(table_count(newtable, xx) == 0) then
+      newtable[#newtable+1] = xx
+    end
+  end
+  return newtable
+end
+
+function removeTableDuplicates2(tbl)
+	local t={}
+	for k,v in ipairs(tbl) do
+		t[v] = true
+	end
+	local new={}
+	for k,v in pairs(t) do
+		table.insert(new, k)
+	end 
+	return new
 end
 
 function stepsPrettyDisplay(str)

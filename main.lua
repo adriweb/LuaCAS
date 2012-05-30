@@ -21,6 +21,7 @@ function main()
         io.write("luaCAS> ")
         io.flush()
         input = io.read()
+        outputStack = {}
         if input:len() > 0 then
 
             if input ~= input:gsub("(Ans)", rawResult) then
@@ -55,25 +56,24 @@ function main()
                         finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+" .. input))))
                     end
                     debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
-
-                    rawResult = finalRes
-                    if colorize(factResult) ~= colorize(finalRes) and (improvedRPN ~= finalRes or colorize(improvedRPN) == colorize(input)) then
-                        prettyDisplay(finalRes)
-                    elseif not showSteps then
-                        prettyDisplay(finalRes)
-                    else
-                        debugPrint('   "Steps" result already was the final result. Not re-printing')
-                    end
+					
+					prettyDisplay(finalRes)
 
                 else
                     debugPrint("   Direct Calculation (via lua math engine).")
                     rawResult = finalRes
                     prettyDisplay(finalRes)
                 end
+                
+                cleanOutputStack()
+				rawResult = outputStack[#outputStack]
+
             end
+				
+			unpackOutputStack()
+        	outputStack = {}
 
             io.write("\n")
-
             io.flush()
 
             chgFlag = 0
