@@ -431,7 +431,7 @@ function detectCommutGroup(rpn)
                     i = i - #lesgroupestables1 - #lesgroupestables2
                 else
                     lesgroupes[cptgrp] = rpn[i] .. " " .. (lesgroupes[cptgrp] or "")
-							--print("pendant le while interieur lesgroupes", tblinfo2(lesgroupes))
+					--print("pendant le while interieur lesgroupes", tblinfo2(lesgroupes))
 
                     if operator[rpn[i]] then
                         compteur = compteur + 2
@@ -451,7 +451,7 @@ function detectCommutGroup(rpn)
                 end
             end
         end
-                --print("rpn while pendant : ",tblinfo2(rpn))
+        --print("rpn while pendant : ",tblinfo2(rpn))
 
         
         cptgrp = cptgrp + 1
@@ -461,8 +461,10 @@ function detectCommutGroup(rpn)
 
         --print("rpn while fin presque: ",tblinfo2(rpn))
 
-
         lesgroupes = resort(lesgroupes)
+        --dump("lesgroupesici",lesgroupes)
+        if math.mod(#lesgroupes,2) ~= 0 then print("Problem detected !! (simple.lua, detectCommutGroup function, nil value(s) somewhere)") table.remove(lesgroupes,#lesgroupes) end -- crappy error-avoider
+        
         lesgroupes[nbrDeGroupes - 1], lesgroupes[nbrDeGroupes] = lesgroupes[nbrDeGroupes], lesgroupes[nbrDeGroupes - 1]
         if lesgroupes[nbrDeGroupes] or lesgroupes[nbrDeGroupes - 1] then
             gr = (lesgroupes[nbrDeGroupes - 1] or "") .. (lesgroupes[nbrDeGroupes] or "") .. "+"
@@ -546,7 +548,7 @@ function replaceNegative(t)
 end
 
 function symbolify(infix)
-    -- string.gsub(infix,"π","pi")  -- do stuff like that but check it's a variable name alone. Not part of a bigger var name.
+    string.gsub(infix,"π","pi")  -- do stuff like that but check it's a variable name alone. Not part of a bigger var name.
     return infix
 end
 
@@ -554,19 +556,19 @@ function lookForSimilarVariable(lesgroupes)
 
     local temp1, temp2
     possibleCommut = {}
-    --print("lesgroupes : ", tblinfo(lesgroupes))
+	--dump("lesgroupes : ", lesgroupes)
     for i = 1, #lesgroupes, 2 do
         --print("lesgroupes i : ", lesgroupes[i])
         --print("lesgroupes i+1 : ", lesgroupes[i+1])
-        temp1 = lesgroupes[i]:split()
-        temp2 = lesgroupes[i + 1]:split()
-        for _, v in pairs(temp1) do
-            for _, p in pairs(temp2) do
-                if v and v ~= "" and not operator[v] and possibleCommut[#possibleCommut] ~= i then
-                    table.insert(possibleCommut, i)
-                end
-            end
-        end
+		temp1 = lesgroupes[i]:split()
+		temp2 = lesgroupes[i + 1]:split()        
+		for _, v in pairs(temp1) do
+			for _, p in pairs(temp2) do
+			   if v and v ~= "" and not operator[v] and possibleCommut[#possibleCommut] ~= i then
+				  table.insert(possibleCommut, i)
+			   end
+			end
+		end
     end
 
     return possibleCommut
