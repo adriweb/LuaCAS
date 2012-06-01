@@ -48,18 +48,41 @@ function div(a, b)
     end
 end
 
-function simplify2(rpn)
-    rpn = copyTable(replaceNegative(rpn))
+function simplify3(rpn)	
+	--rpn = copyTable(replaceNegative(rpn))
     rpn = copyTable(simpleFactor(rpn))
     rpn = copyTable(calculateNumericalCoeff(rpn))  -- 5 1 +  ->  6
     rpn = copyTable(create1x(rpn))
     rpn = copyTable(replaceP(rpn))
     rpn = copyTable(simpleFactor(rpn))
+    rpn = copyTable(simpleFactorTheRemix(rpn))
     rpn = copyTable(deleteUseless(rpn))
-
+	rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
+	
     if needReSimplify then
         rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
         rpn = copyTable(simplify2(rpn))
+    end
+    rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
+    return rpn
+end
+
+function simplify2(rpn)
+    --rpn = copyTable(replaceNegative(rpn))
+    rpn = copyTable(simpleFactor(rpn))
+    rpn = copyTable(calculateNumericalCoeff(rpn))  -- 5 1 +  ->  6
+    rpn = copyTable(create1x(rpn))
+    rpn = copyTable(replaceP(rpn))
+    rpn = copyTable(trySimplifyRpn(rpn))
+    rpn = copyTable(simpleFactor(rpn))
+    rpn = copyTable(simpleFactorTheRemix(rpn))
+    rpn = copyTable(deleteUseless(rpn))
+	rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
+	
+    if needReSimplify then
+        rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
+        rpn = copyTable(simplify2(rpn))
+        return rpn
     end
 
     rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
@@ -80,7 +103,7 @@ function simplify(rpn)
     needReSimplify = true
 
     local perfectRpn = copyTable(rpn)
-    --local perfectRpn = copyTable(calculateNumericalCoeff(rpn))
+    perfectRpn = copyTable(calculateNumericalCoeff(rpn))
 	local compteurdemerde = 0
     while needReSimplify do
 		compteurdemerde = 1
@@ -93,11 +116,12 @@ function simplify(rpn)
 
         local commutList2 = detectCommutGroup(rpn)
         listRpn = createPossibleRpnTable(rpn, commutList2)
+        
         for k, v in pairs(listRpn) do
             v = create1x(v)
 			newV = {}
-            newV = copyTable(simplify2(v))
-            newV = copyTable(simplify2(newV))
+            newV = copyTable(simplify3(v))
+            newV = copyTable(simplify3(newV))
             v = create1x(v)
             newV = create1x(newV)
             if (numberOfMult(newV) < numberOfMult(v)) then
@@ -112,6 +136,7 @@ function simplify(rpn)
         rpn = copyTable(perfectRpn)
     end
 	
+	perfectRpn = copyTable(calculateNumericalCoeff(perfectRpn))
 	perfectRpn = copyTable(deleteUseless(perfectRpn))
     perfectRpn = copyTable(alphabetize(perfectRpn))
     return perfectRpn
@@ -232,8 +257,7 @@ function calculateNumericalCoeff(rpn, offs)
     end
 end
 
--- Create a new RPN valid group from data values. startgroup ('a') is need to fix the previous RPN group
-function creategroup(datatable, operator, startgroup)
+function creategroup(datatable, operator, startgroup)-- Create a new RPN valid group from data values. startgroup ('a') is need to fix the previous RPN group
     local group = {}
 
     group[1] = startgroup or table.remove(datatable, 1)
@@ -246,8 +270,8 @@ function creategroup(datatable, operator, startgroup)
     return group
 end
 
--- Simplify the group. If startgroup is not nil, then it is part of a previous RPN group
-function simpgroup(rpn, posa, posb, o, startgroup)
+function simpgroup(rpn, posa, posb, o, startgroup)-- Simplify the group. If startgroup is not nil, then it is part of a previous RPN group
+
     local len = #rpn
     local n = posb - posa -- The length of the RPN group we are handling
     local datatable = {}
@@ -391,7 +415,6 @@ function simpleFactor(rpn, start)
                         rpn[i + 4] = insideOP1
                         table.remove(rpn, i + 5)
                         table.remove(rpn, i + 5)
-                        factResult = convertRPN2Infix(tblinfo(rpn))
                         stepsPrettyDisplay(convertRPN2Infix(tblinfo(rpn)))
                         rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
                     end
@@ -402,16 +425,9 @@ function simpleFactor(rpn, start)
         i = i + 1
     end
 
-    if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
-	oldrpn = {}
-	oldrpn = copyTable(rpn)
-	rpn = {}
-	rpn = copyTable(simpleFactorTheRemix(oldrpn))
-	rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
 	if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
     return rpn
 end
-
 
 function simpleFactorTheRemix(rpn, start)
 		local i = start or #rpn
@@ -426,9 +442,9 @@ function simpleFactorTheRemix(rpn, start)
 				insideOP2 = rpn[i-1]
 				if insideOP2 ~= "^" and (strType(var2) == "variable" or strType(var2) == "numeric") and strType(insideOP2) == "operator" then
 					coeff2 = rpn[i-3]
-					k1 = 0
-					if (strType(coeff2) ~= "numeric" and strType(coeff2) ~= "variable") and strType(coeff2) == "operator" then
 					k1 = 1
+					if (strType(coeff2) ~= "numeric" and strType(coeff2) ~= "variable") and strType(coeff2) == "operator" then
+					--k1 = 1
 					isOk = 2
 					coeff2 = rpn[i-3] .. " "
 						while isOk ~= 0 and i-3-k1 > 3 do
@@ -440,15 +456,16 @@ function simpleFactorTheRemix(rpn, start)
 						k1 = k1 + 1
 						end
 						if i-3-k1 <= 4 then return rpn end
+					else coeff2 = coeff2 .. " "
 					end
 						var1 = rpn[i-4-k1]
 						insideOP1 = rpn[i-3-k1]
 						if insideOP1 == insideOP2 and var1 == var2 and (strType(var1) == "variable" or strType(var1) == "numeric") and strType(insideOP1) == "operator" then
 							coeff1 = rpn[i-5-k1]
-							k2 = 0
+							k2 = 1
 							if (strType(coeff1) ~= "numeric" and strType(coeff1) ~= "variable") and strType(coeff1) == "operator" then
 							coeff1 = rpn[i-5-k1] .. " "
-							k2 = 1
+							--k2 = 1
 							isOk = 2
 								while isOk ~= 0 and i-5-k1-k2 >= 1 do
 								coeff1 = rpn[i-5-k1-k2] .. " " .. coeff1
@@ -459,6 +476,7 @@ function simpleFactorTheRemix(rpn, start)
 								k2 = k2 + 1
 								end
 								if i-5-k1-k2 < 0 then return rpn end
+							else coeff1 = coeff1 .. " "
 							end
 							debugPrint("   simpleFactorisationRemix possible. Doing it.  rpn = ", tblinfo(rpn))
 							debugPrint("   Possible to factorremix : " .. coeff1 .. " " .. insideOP1 .. " " .. var1 .. " " .. globalOP .. " " .. coeff2 .. " " .. insideOP2 .. " " .. var2)
@@ -482,7 +500,6 @@ function simpleFactorTheRemix(rpn, start)
 							rpn = {}
 							rpnStr = rpnStartStr .. coeff1 .. coeff2 .. globalOP .. var1 .. insideOP1 .. rpnEndStr
 							rpn = copyTable(rpnStr:split())
-							factResult = convertRPN2Infix(tblinfo(rpn))
 							stepsPrettyDisplay(convertRPN2Infix(tblinfo(rpn)))
 							rpn = toRPN(convertRPN2Infix(tblinfo(rpn)))
 							if not compareTable(oldrpn, rpn) then needReSimplify = true else needReSimplify = false end
@@ -508,10 +525,7 @@ function detectCommutGroup(rpn)
     cptgrp = 1
     i = 1
     while i > 0 do
-		--print("i ="..i)
-		--dump("lesgroupes debutwhile :",lesgroupes)
-        --debugPrint("Inside boucle while commut : " .. i)
-        --print("rpn while : ",tblinfo2(rpn))
+        debugPrint("Inside boucle while commut : " .. i)
         i = findNextPlus(rpn)
         compteur = 2
         while compteur ~= 0 do
@@ -524,15 +538,10 @@ function detectCommutGroup(rpn)
                     i = i - #lesgroupestables1 - #lesgroupestables2
                 else
                     lesgroupes[cptgrp] = rpn[i] .. " " .. (lesgroupes[cptgrp] or "")
-					--print("pendant le while interieur lesgroupes", tblinfo2(lesgroupes))
-
                     if operator[rpn[i]] then
                         compteur = compteur + 2
                     end
                 end
-            end
-            if rpn[i + 1] == "+" then
-                --compteur = compteur - 1
             end
             compteur = compteur - 1
             if compteur == 1 then
@@ -544,35 +553,23 @@ function detectCommutGroup(rpn)
                 end
             end
         end
-        --print("rpn while pendant : ",tblinfo2(rpn))
-
-
         cptgrp = cptgrp + 1
         for tmp = 1, findNextPlus(rpn) do
             table.remove(rpn, 1)
         end
-
-        --print("rpn while fin presque: ",tblinfo2(rpn))
-
         lesgroupes = resort(lesgroupes)
-        --dump("lesgroupesici",lesgroupes)
         if math.mod(#lesgroupes,2) ~= 0 then
 		print("Problem detected !! (simple.lua, detectCommutGroup function, nil value(s) somewhere)")
 		--table.remove(lesgroupes,#lesgroupes)
 		end -- crappy error-avoider
-
         lesgroupes[nbrDeGroupes - 1], lesgroupes[nbrDeGroupes] = lesgroupes[nbrDeGroupes], lesgroupes[nbrDeGroupes - 1]
         if lesgroupes[nbrDeGroupes] or lesgroupes[nbrDeGroupes - 1] then
             gr = (lesgroupes[nbrDeGroupes - 1] or "") .. (lesgroupes[nbrDeGroupes] or "") .. "+"
             table.insert(rpn, 1, gr)
         end
-
         i = findNextPlus(rpn)
-        --print("rpn while fin fin : ",tblinfo2(rpn))
-
         nbrDeGroupes = nbrDeGroupes + 2
     end
-
     debugPrint("   Fin while commut. rpn = ", tblinfo(rpn))
     local rpnCopy = {}
     for k, v in pairs(rpn) do
@@ -598,18 +595,14 @@ function detectCommutGroup(rpn)
     for k, v in pairs(rpnCopy) do
         if not v then table.remove(rpnCopy[k]) end
     end
-
     table.remove(rpnCopy, #rpnCopy)
-
     rpn = nil
     rpn = copyTable(rpnCopy)
-
     possibleCommut = lookForSimilarVariable(lesgroupes)
-	--dump("lesgroupes ------->",(lesgroupes))
+	--print("lesgroupes ------->",tblinfo2(lesgroupes))
     commutList = generateEachCommmut(possibleCommut, rpn)
-	--dump("commutlist ------->",(commutList))
+	--print("commutlist ------->",cc(commutList))
     return commutList
-	--(a+b+c+d)*x+(e+f+g+h)*x
 end
 
 function expand(rpn)
@@ -672,32 +665,6 @@ function lookForSimilarVariable(lesgroupes)
 
     return possibleCommut
 end
-
---[[function oldgenerateEachCommmut(possibleCommut,rpn)
-	local commutList = {}
-	for _,v in pairs(possibleCommut) do
-		for _,w in pairs(possibleCommut) do
-			if v<w then
-			for _,x in pairs(possibleCommut) do
-				if x>w then
-				for _,y in pairs(possibleCommut) do
-					if x<y then
-						table.insert(commutList,v .. w .. x .. y)
-					elseif commutList[#commutList] ~= v .. w .. x then
-						table.insert(commutList,v .. w .. x)
-					end
-				end
-				elseif commutList[#commutList] ~= v .. w then
-					table.insert(commutList,v .. w)
-				end
-			end
-			elseif commutList[#commutList] ~= v then
-				table.insert(commutList,v)
-			end
-		end
-	end
-	return commutList
-end]] --  obsolete thanks to Jim : see below these 2 new functions :
 
 function generateEachCommmutHelper(possibleCommut, commutList, pos, length, add)
     for i = pos, length do
@@ -764,4 +731,33 @@ function numberOfMult(theRpn)
         if v and v == "*" then compt = compt + 1 end
     end
     return compt
+end
+
+function trySimplifyRpn(rpn)
+    local oldrpn = {}
+    oldrpn = copyTable(rpn)
+
+	if #rpn>8 then
+		for i=1,#rpn-8 do
+			if rpn[i+3] == "+" and rpn[i+7] == "+" then
+				if (strType(rpn[i]) == "variable" or strType(rpn[i]) == "numeric")
+				 and (strType(rpn[i+1]) == "variable" or strType(rpn[i+1]) == "numeric")
+				  and (strType(rpn[i+4]) == "variable" or strType(rpn[i+4]) == "numeric")
+				   and (strType(rpn[i+5]) == "variable" or strType(rpn[i+5]) == "numeric") then
+					if rpn[i+2] == "*" and rpn[i+6] == "*" then
+						table.insert(rpn,i+7,"+")
+						table.remove(rpn,i+3)
+						needReSimplify = true
+					end
+				end
+			end
+		end
+	end
+	while needReSimplify do 
+		rpn = copyTable(simpleFactor(rpn))
+	end
+	if not compareTable(oldrpn, rpn) then
+		rpn = copyTable(trySimplifyRpn(rpn)) 
+	end
+	return rpn
 end

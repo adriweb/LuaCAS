@@ -13,13 +13,16 @@ dofile'simple.lua'
 dofile'wolfram.lua'
 
 cmdResult = "No Command"
+showSemiDebug = false
 
 local commands = {
     ["showAbout"] = function(argsTable) cmdResult = c_multiSpace .. getAbout() end,
     ["showStatus"] = function(argsTable) cmdResult = getStatus() end,
     ["help"] = function(argsTable) cmdResult = getHelp() end,
-    ["debugON"] = function(argsTable) showDebug = true cmdResult = "---Debug output enabled---" end,
+    ["debugON"] = function(argsTable) showDebug = true showSemiDebug = false cmdResult = "---Debug output enabled---" end,
     ["debugOFF"] = function(argsTable) showDebug = false cmdResult = "---Debug output disabled---" end,
+    ["semiDebugON"] = function(argsTable) showSemiDebug = true showDebug = false cmdResult = "---SemiDebug output enabled---" end,
+    ["semiDebugOFF"] = function(argsTable) showSemiDebug = false cmdResult = "---SemiDebug output disabled---" end,
     ["treeON"] = function(argsTable) showTree = true cmdResult = "---Tree output enabled---" end,
     ["treeOFF"] = function(argsTable) showTree = false cmdResult = "---Tree output disabled---" end,
     ["colorsON"] = function(argsTable) showColors = true cmdResult = "---Colors output enabled---" end,

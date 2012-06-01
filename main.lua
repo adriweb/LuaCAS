@@ -54,8 +54,8 @@ function main()
                         debugPrint("   got variable error in calculateRPN!")
                         finalRes = convertRPN2Infix(simprpn)
                     else
-                        print("this should never appear ? (main:57). simprpn was = ", simprpn)
-                        finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+" .. input))))
+                        --print("this should never appear ? (main:57). simprpn was = ", simprpn)
+                        --finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+" .. input))))
                     end
                     debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
 					

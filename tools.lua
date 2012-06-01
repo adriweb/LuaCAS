@@ -238,7 +238,7 @@ function copyTable(tbl)
 end
 
 function prettyDisplay(str)
-	if showDebug then
+	if showDebug or showSemiDebug then
 		print("     =  " .. colorize(str))
 	else
 		table.insert(outputStack,str)
@@ -246,7 +246,7 @@ function prettyDisplay(str)
 end
 
 function unpackOutputStack()
-	if showSteps or showDebug then
+	if showSteps or showDebug or showSemiDebug then
 		for _,str in pairs(outputStack) do
 			if str and str~="nil" then print("     =  " .. colorize(str)) end
 		end
@@ -255,11 +255,17 @@ function unpackOutputStack()
 	end
 end
 
+function removeMult(stack)
+	stack[#stack] = stack[#stack]:gsub("*","")
+	return stack
+end
+
 function cleanOutputStack()
 	-- TODEBUG / TODO ? : avoid removing good stuff like "x" when showSteps and input == "x" ( now -> "1*x" )
 	outputStack = removeTableDuplicates(outputStack)
+	--outputStack = removeMult(outputStack)
 	--print("avant", tblinfo2(outputStack))
-	if showSteps or showDebug then
+	if showSteps or showDebug or showSemiDebug then
 		if #outputStack > 2 then table.remove(outputStack,1) end
 		--print("milieu", tblinfo2(outputStack))
 		local indexMult, lengthMult = getMultiplications(outputStack)
@@ -345,5 +351,5 @@ function removeTableDuplicates2(tbl) -- Jim's sorcery (which is awesome btw)
 end
 
 function stepsPrettyDisplay(str)
-    if showSteps or showDebug then prettyDisplay(str) end
+    if showSteps or showDebug or showSemiDebug then prettyDisplay(str) end
 end
