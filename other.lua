@@ -1,8 +1,9 @@
 -------------------------------------
 ----            LuaCAS           ----
-----             v0.4            ----
+----             v1.0            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
+----       Alexandre Gensse      ----
 ----             2012            ----
 ----                             ----
 ----         GPL License         ----
@@ -13,7 +14,7 @@ dofile"tools.lua"
 
 function getAbout()
     return [[╔----------------------------╗
-║  LuaCAS 0.4 · GPL License  ║
+║  LuaCAS 1.0 · GPL License  ║
 ╠----------------------------╢
 ║  (C) 2012 Adrien Bertrand  ║
 ║    and Alexandre Gensse.   ║

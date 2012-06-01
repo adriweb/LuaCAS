@@ -1,8 +1,9 @@
 -------------------------------------
 ----            LuaCAS           ----
-----             v0.4            ----
+----             v1.0            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
+----       Alexandre Gensse      ----
 ----             2012            ----
 ----                             ----
 ----         GPL License         ----
@@ -632,7 +633,7 @@ end
 function replaceNegative(t)
     for i = 1, #t - 1, 1 do
         if strType(t[i]) == "numeric" and t[i + 1] == "-" then
-            t[i] = "-" .. t[i]
+            t[i] = "-"  .. t[i]
             t[i + 1] = "+"
         end
     end

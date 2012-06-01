@@ -3,6 +3,7 @@
 ----             v0.4            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
+----       Alexandre Gensse      ----
 ----             2012            ----
 ----                             ----
 ----         GPL License         ----

@@ -15,5 +15,12 @@ x+x
 
 debugON
 
+2*x+3*x
 
 (a+b)*x+(c+d)*x
+
+
+debugOFF
+
+
+a+a+a+a+a+a+a+a+a+a+a+a+b+b+b+b+b+b+b+b+b+c+c+c+c+c+c+c+c+a+a+a+a+a+a+a+a
