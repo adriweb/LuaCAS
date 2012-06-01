@@ -1,6 +1,6 @@
 -------------------------------------
 ----            LuaCAS           ----
-----             v0.4            ----
+----             v1.0            ----
 ----                             ----
 ----  Adrien 'Adriweb' Bertrand  ----
 ----       Alexandre Gensse      ----
@@ -17,12 +17,15 @@ dofile'rpn2infix.lua'
 dofile'commands.lua'
 
 rawResult = ""
+timeStart = 0
+timeEnd = 0
 
 function main()
     while input ~= "exit" do
         io.write("luaCAS> ")
         io.flush()
         input = io.read()
+        timeStart = os.time()
         outputStack = {}
         if input:len() > 0 then
             if input ~= input:gsub("(Ans)", rawResult) then
@@ -45,7 +48,8 @@ function main()
                     local improvedRPN = convertRPN2Infix(tblinfo(toRPN("0+" .. input))):sub(3)
                     improvedRPN = convertRPN2Infix(tblinfo(toRPN(input)))
                     if colorize(improvedRPN) ~= colorize(input) and chgFlag == 0 then prettyDisplay(improvedRPN) end
-
+					
+					timeStart = os.time()
                     local simprpn = tblinfo(simplify(toRPN(input)))
                     globalRPN = simprpn
                     debugPrint("   RPN expr of simplified is : " .. colorize(simprpn))
@@ -59,6 +63,8 @@ function main()
                         --finalRes = convertRPN2Infix(tblinfo(simplify(toRPN("0+" .. input))))
                     end
                     debugPrint("   Simplified infix from RPN is : " .. colorize(finalRes))
+					
+					timeEnd = os.time()
 					
                     rawResult = finalRes
 					prettyDisplay(finalRes)
@@ -79,6 +85,8 @@ function main()
 				
 			unpackOutputStack()
         	outputStack = {}
+
+			print(timeEnd-timeStart .. " sec.")
 
             io.write("\n")
             io.flush()

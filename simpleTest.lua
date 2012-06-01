@@ -115,10 +115,11 @@ function simplify(rpn)
             break
         end
 
-        local commutList2 = detectCommutGroup(rpn)
-        listRpn = createPossibleRpnTable(rpn, commutList2)
+        local perfectRpn = detectCommutGroup(rpn)
         
-        for k, v in pairs(listRpn) do
+        --listRpn = createPossibleRpnTable(rpn, commutList2)
+        
+        --[[for k, v in pairs(listRpn) do
             v = create1x(v)
 			newV = {}
             newV = copyTable(simplify3(v))
@@ -131,9 +132,9 @@ function simplify(rpn)
                 perfectRpn = copyTable(newV)
                 needReSimplify = true
                 break
-            else needReSimplify = false
-            end
-        end
+            	else needReSimplify = false
+            	end
+        	end]]--
         rpn = copyTable(perfectRpn)
     end
 	
@@ -601,9 +602,8 @@ function detectCommutGroup(rpn)
     rpn = copyTable(rpnCopy)
     possibleCommut = lookForSimilarVariable(lesgroupes)
 	--print("lesgroupes ------->",tblinfo2(lesgroupes))
-    commutList = generateEachCommmut(possibleCommut, rpn)
-	--print("commutlist ------->",cc(commutList))
-    return commutList
+
+    return rpn
 end
 
 function expand(rpn)
@@ -670,7 +670,10 @@ end
 function generateEachCommmutHelper(possibleCommut, commutList, pos, length, add)
     for i = pos, length do
         local toadd = add .. possibleCommut[i] .. " "
-        table.insert(commutList, toadd)
+        local rpnsave = copyTable(rpn)
+        rpn = rpnCommutRpn(rpn)
+        rpn = copyTable(simplify(rpn))
+        if (numberOfMult(rpn) < numberOfMult(rpnsave)) then return rpn else rpn = copyTable(rpnsave) end
         generateEachCommmutHelper(possibleCommut, commutList, i + 1, length, toadd)
     end
 end
@@ -678,8 +681,8 @@ end
 function generateEachCommmut(possibleCommut, rpn)
     local commutList = {}
     table.sort(possibleCommut)
-    generateEachCommmutHelper(possibleCommut, commutList, 1, #possibleCommut, "")
-    return commutList
+    rpn = generateEachCommmutHelper(possibleCommut, commutList, 1, #possibleCommut, "")
+    return rpn
 end
 
 function commut(lesgroupes, i, rpn)
@@ -724,6 +727,21 @@ function createPossibleRpnTable(theRpnSave, commutList)
         theRpn = nil
     end
     return listRpn
+end
+
+function rpnCommutRpn(rpn,commut)
+	local theRpn = {}
+
+        local tempCommutTbl = {}
+        for tmpvar = 1, string.len(tostring(commut)) do
+			tempCommutTbl = commut:split()
+			table.remove(tempCommutTbl,#tempCommutTbl)
+			--dump("tempCommutTbl : ", tempCommutTbl)
+        end
+        for _, valeur in pairs(tempCommutTbl) do
+            theRpn = commut(lesgroupes, valeur, theRpn)
+        end
+        return theRpn
 end
 
 function numberOfMult(theRpn)
